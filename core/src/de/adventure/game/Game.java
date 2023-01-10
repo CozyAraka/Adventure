@@ -14,7 +14,6 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
 	}
-	//lulw
 
 	@Override
 	public void render () {
