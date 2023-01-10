@@ -1,5 +1,6 @@
 package de.adventure.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
@@ -12,5 +13,6 @@ public class Launch {
 		config.setWindowIcon("icon.png");
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		new Lwjgl3Application(new Game(), config);
+		Gdx.graphics.setVSync(false);
 	}
 }
