@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Game extends ApplicationAdapter {
-	private TextThings text = new TextThings();
 	private BitmapFont font;
 	private SpriteBatch batch;
 
@@ -25,21 +24,12 @@ public class Game extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			dispose();
 		}
-		text.onRender(batch, font);
-	}
-
-	@Override
-	public void pause() {
-		Gdx.graphics.setForegroundFPS(30);
-	}
-
-	@Override
-	public void resume() {
-		Gdx.graphics.setForegroundFPS(240);
 	}
 
 	@Override
 	public void dispose () {
+		batch.dispose();
+		font.dispose();
 		System.exit(0);
 	}
 
