@@ -5,42 +5,42 @@ import de.adventure.game.items.weapons.Weapon;
 
 import java.util.ArrayList;
 
-public class UncommonSlashing {
+public class RareSlashing {
     private Weapon woodenSword, stoneSword, ironSword;
     private ArrayList<Weapon> list;
 
-    public UncommonSlashing() {
+    public RareSlashing() {
         woodenSword = new Weapon(
-                "Uncommon Holzschwert",
+                "Rare Holzschwert",
                 "Nur ein Holzschwert, was habt ihr erwartet?",
-                12.0D,
-                12.0D,
-                1.5D,
-                Item.ItemState.NEW,
-                Item.ItemCategory.DAMAGE_ITEM,
-                Item.ItemRarity.UNCOMMON,
-                Weapon.WeaponCategory.SLASHING_WEAPON);
-
-        stoneSword = new Weapon(
-                "Uncommon Steinschwert",
-                "Ein schweres Steinschwert, scheint ziemlich hart zu sein.",
-                19.0D,
-                19.0D,
+                20.0D,
+                20.0D,
                 3.0D,
                 Item.ItemState.NEW,
                 Item.ItemCategory.DAMAGE_ITEM,
-                Item.ItemRarity.UNCOMMON,
+                Item.ItemRarity.RARE,
+                Weapon.WeaponCategory.SLASHING_WEAPON);
+
+        stoneSword = new Weapon(
+                "Rare Steinschwert",
+                "Ein schweres Steinschwert, scheint ziemlich hart zu sein.",
+                25.0D,
+                25.0D,
+                4.5D,
+                Item.ItemState.NEW,
+                Item.ItemCategory.DAMAGE_ITEM,
+                Item.ItemRarity.RARE,
                 Weapon.WeaponCategory.SLASHING_WEAPON);
 
         ironSword = new Weapon(
-                "Uncommon Eisenschwert",
+                "Rare Eisenschwert",
                 "Das erste wirkliche Schwert, endlich was scharfes!",
-                25.0D,
-                25.0D,
-                7.5D,
+                30.0D,
+                30.0D,
+                9.0D,
                 Item.ItemState.NEW,
                 Item.ItemCategory.DAMAGE_ITEM,
-                Item.ItemRarity.UNCOMMON,
+                Item.ItemRarity.RARE,
                 Weapon.WeaponCategory.SLASHING_WEAPON);
 
         list = new ArrayList<>();
