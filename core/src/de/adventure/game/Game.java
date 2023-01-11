@@ -3,13 +3,18 @@ package de.adventure.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Game extends ApplicationAdapter {
-	private final Game game = this;
+	private BitmapFont font;
+	private SpriteBatch batch;
 
 	@Override
 	public void create () {
+		font = new BitmapFont();
+		batch = new SpriteBatch();
 		ScreenUtils.clear(0, 0, 0, 1);
 	}
 
@@ -22,17 +27,9 @@ public class Game extends ApplicationAdapter {
 	}
 
 	@Override
-	public void pause() {
-		Gdx.graphics.setForegroundFPS(30);
-	}
-
-	@Override
-	public void resume() {
-		Gdx.graphics.setForegroundFPS(240);
-	}
-
-	@Override
 	public void dispose () {
+		batch.dispose();
+		font.dispose();
 		System.exit(0);
 	}
 
@@ -49,9 +46,5 @@ public class Game extends ApplicationAdapter {
 			check = false;
 			resume();
 		}
-	}
-
-	public Game getGame() {
-		return game;
 	}
 }
