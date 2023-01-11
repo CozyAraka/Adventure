@@ -1,18 +1,28 @@
 package de.adventure.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.items.ItemCollector;
+import de.adventure.game.screens.MainMenu;
+import de.adventure.game.screens.MainScreen;
 
-public class Game extends ApplicationAdapter {
+public class Main extends Game {
+	//LibGDX
 	private BitmapFont font;
 	private SpriteBatch batch;
+	private FitViewport viewport;
+	private Game game;
 
+	//Items
 	private ItemCollector collector;
+
+	//Screens
+	private MainMenu mainMenu;
+	private MainScreen mainScreen;
 
 	public enum GameState {
 		RUNNING,
@@ -26,11 +36,15 @@ public class Game extends ApplicationAdapter {
 		gameState = GameState.LOADING;
 		System.out.println("Loading...\n");
 
+		game = this;
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+		viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		collector = new ItemCollector();
 		collector.loadedItems();
+
+		setMenuScreen();
 
 		System.out.println("Done loading!\n");
 
@@ -40,30 +54,19 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		pauseKeyCheck();
-		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			dispose();
-		}
+		super.render();
 	}
 
 	@Override
 	public void dispose () {
 		batch.dispose();
 		font.dispose();
+		super.dispose();
 		System.exit(0);
 	}
 
-	private boolean check = false;
-
-	public void pauseKeyCheck() {
-		if(Gdx.input.isKeyJustPressed(Input.Keys.P) && !check) {
-			check = true;
-			pause();
-
-		}else if(Gdx.input.isKeyJustPressed(Input.Keys.P) && check) {
-			check = false;
-			resume();
-		}
+	private void setMenuScreen() {
+		game.setScreen(new MainMenu(this));
 	}
 
 	public static GameState getGameState() {
