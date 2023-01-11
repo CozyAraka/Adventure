@@ -11,10 +11,19 @@ public class Game extends ApplicationAdapter {
 	private BitmapFont font;
 	private SpriteBatch batch;
 
+	public enum GameState {
+		RUNNING,
+		PAUSED,
+		LOADING
+	}
+	private static GameState gameState;
+
 	@Override
 	public void create () {
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+
+		gameState = GameState.RUNNING;
 		ScreenUtils.clear(0, 0, 0, 1);
 	}
 
@@ -37,14 +46,33 @@ public class Game extends ApplicationAdapter {
 
 	public void pauseKeyCheck() {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.P) && !check) {
-			System.out.println("1");
 			check = true;
 			pause();
 
 		}else if(Gdx.input.isKeyJustPressed(Input.Keys.P) && check) {
-			System.out.println("2");
 			check = false;
 			resume();
+		}
+	}
+
+	public static GameState getGameState() {
+		return gameState;
+	}
+
+	public static void setGameState(GameState state) {
+		switch(state) {
+			case RUNNING:
+				break;
+
+			case PAUSED:
+				break;
+
+			case LOADING:
+				break;
+
+			default:
+				gameState = GameState.RUNNING;
+				break;
 		}
 	}
 }
