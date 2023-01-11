@@ -1,13 +1,15 @@
 package de.adventure.game.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import de.adventure.game.Game;
 
 public class ScreenBase implements Screen {
     protected final Game game;
+    private String name;
 
-    public ScreenBase(Game game){
+    public ScreenBase(Game game, String name){
         this.game = game;
+        this.name = name;
 
     }
 
@@ -44,5 +46,9 @@ public class ScreenBase implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    public String getName() {
+        return name;
     }
 }
