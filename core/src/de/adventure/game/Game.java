@@ -3,13 +3,19 @@ package de.adventure.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Game extends ApplicationAdapter {
-	private final Game game = this;
+	private TextThings text = new TextThings();
+	private BitmapFont font;
+	private SpriteBatch batch;
 
 	@Override
 	public void create () {
+		font = new BitmapFont();
+		batch = new SpriteBatch();
 		ScreenUtils.clear(0, 0, 0, 1);
 	}
 
@@ -19,6 +25,7 @@ public class Game extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
 			dispose();
 		}
+		text.onRender(batch, font);
 	}
 
 	@Override
@@ -49,9 +56,5 @@ public class Game extends ApplicationAdapter {
 			check = false;
 			resume();
 		}
-	}
-
-	public Game getGame() {
-		return game;
 	}
 }
