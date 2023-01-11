@@ -30,7 +30,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 
 		collector = new ItemCollector();
-		collector.test();
+		collector.loadedItems();
 
 		System.out.println("Done loading!\n");
 
@@ -73,12 +73,15 @@ public class Game extends ApplicationAdapter {
 	public static void setGameState(GameState state) {
 		switch(state) {
 			case RUNNING:
+				gameState = GameState.RUNNING;
 				break;
 
 			case PAUSED:
+				gameState = GameState.PAUSED;
 				break;
 
 			case LOADING:
+				gameState = GameState.LOADING;
 				break;
 
 			default:

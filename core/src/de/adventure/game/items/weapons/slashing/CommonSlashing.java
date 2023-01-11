@@ -11,7 +11,7 @@ public class CommonSlashing {
 
     public CommonSlashing() {
         woodenSword = new Weapon(
-                "Holzschwert",
+                "Common Holzschwert",
                 "Nur ein Holzschwert, was habt ihr erwartet?",
                 10.0D,
                 10.0D,
@@ -22,7 +22,7 @@ public class CommonSlashing {
                 Weapon.WeaponCategory.SLASHING_WEAPON);
 
         stoneSword = new Weapon(
-                "Steinschwert",
+                "Common Steinschwert",
                 "Ein schweres Steinschwert, scheint ziemlich hart zu sein.",
                 15.0D,
                 15.0D,
@@ -33,7 +33,7 @@ public class CommonSlashing {
                 Weapon.WeaponCategory.SLASHING_WEAPON);
 
         ironSword = new Weapon(
-                "Eisenschwert",
+                "Common Eisenschwert",
                 "Das erste wirkliche Schwert, endlich was scharfes!",
                 20.0D,
                 20.0D,
