@@ -6,10 +6,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import de.adventure.game.items.ItemCollector;
 
 public class Game extends ApplicationAdapter {
 	private BitmapFont font;
 	private SpriteBatch batch;
+
+	private ItemCollector collector;
 
 	public enum GameState {
 		RUNNING,
@@ -20,8 +23,16 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		gameState = GameState.LOADING;
+		System.out.println("Loading...\n");
+
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+
+		collector = new ItemCollector();
+		collector.test();
+
+		System.out.println("Done loading!\n");
 
 		gameState = GameState.RUNNING;
 		ScreenUtils.clear(0, 0, 0, 1);
