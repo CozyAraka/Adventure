@@ -1,17 +1,24 @@
 package de.adventure.game.items;
 
+import de.adventure.game.items.weapons.Weapon;
 import de.adventure.game.items.weapons.blunt.*;
 import de.adventure.game.items.weapons.slashing.*;
 
 import java.util.ArrayList;
 
 public class ItemCollector {
+    //Item Liste
     private ArrayList<Item> itemList;
+    //private ArrayList<Weapon> itemListUsables;
+    //private ArrayList<Weapon> itemListHealing;
+
+    //Alle Items
     private CommonSlashing commonSlashing;
     private UncommonSlashing uncommonSlashing;
     private RareSlashing rareSlashing;
     private MysticSlashing mysticSlashing;
     private LegendarySlashing legendarySlashing;
+
     private CommonBlunt commonBlunt;
     private UncommonBlunt uncommonBlunt;
     private RareBlunt rareBlunt;
@@ -20,6 +27,8 @@ public class ItemCollector {
 
     public ItemCollector() {
         itemList = new ArrayList<>();
+        //itemListUsables = new ArrayList<>();
+        //itemListHealing = new ArrayList<>();
 
         //Slashing
         commonSlashing = new CommonSlashing();
@@ -49,7 +58,7 @@ public class ItemCollector {
 
     public void addToList() {
         //Dummy Item
-        itemList.add(new Item("null_item", "null", 0, 0 , Item.ItemState.BROKEN, Item.ItemType.USABLE_ITEM, Item.ItemCategory.VALUABLE_ITEM, Item.ItemRarity.UNKNOWN));
+        itemList.add(new Weapon("null_item", "null", 0, 0 , 0, Item.ItemState.BROKEN, Item.ItemCategory.VALUABLE_ITEM, Item.ItemRarity.UNKNOWN, Weapon.WeaponCategory.SLASHING_WEAPON));
 
         //Slashing
         itemList.addAll(commonSlashing.getList());
