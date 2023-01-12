@@ -38,7 +38,19 @@ public class ItemCollector {
         addToList();
     }
 
+    public Item getItem(int id) {
+        for(Item item : itemList) {
+            if(item.getId() == id) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public void addToList() {
+        //Dummy Item
+        itemList.add(new Item("null_item", "null", 0, 0 , Item.ItemState.BROKEN, Item.ItemType.USABLE_ITEM, Item.ItemCategory.VALUABLE_ITEM, Item.ItemRarity.UNKNOWN));
+
         //Slashing
         itemList.addAll(commonSlashing.getList());
         itemList.addAll(uncommonSlashing.getList());
@@ -54,11 +66,11 @@ public class ItemCollector {
         itemList.addAll(legendaryBlunt.getList());
     }
 
-    public void loadedItems() {
+    public void registerItems() {
         int count = 0;
         for(Item item : itemList) {
-            System.out.println(item.getName() + " registered!");
-
+            item.setId(count);
+            System.out.println(item.getName() + " registered with ID: " + count);
             count++;
         }
         System.out.println("\n" + count + " Items loaded! \n");

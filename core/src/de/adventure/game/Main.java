@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.items.ItemCollector;
+import de.adventure.game.screens.CharacterCreation;
 import de.adventure.game.screens.MainMenu;
-import de.adventure.game.screens.MainScreen;
 
 public class Main extends Game {
 	//LibGDX
@@ -22,7 +22,7 @@ public class Main extends Game {
 
 	//Screens
 	private MainMenu mainMenu;
-	private MainScreen mainScreen;
+	private CharacterCreation characterCreation;
 
 	public enum GameState {
 		RUNNING,
@@ -33,23 +33,29 @@ public class Main extends Game {
 
 	@Override
 	public void create () {
-		gameState = GameState.LOADING;
-		System.out.println("Loading...\n");
+		setGameState(GameState.LOADING);
 
+		//GDX
 		game = this;
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 		viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+		/*batch.begin();
+		font.draw(batch, "Loading...", (float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2);
+		batch.end();*/
+
+		//Items
 		collector = new ItemCollector();
-		collector.loadedItems();
+		collector.registerItems();
 
-		setMenuScreen();
+		//Screens
+		mainMenu = new MainMenu(this, this);
+		characterCreation = new CharacterCreation(this, this);
 
-		System.out.println("Done loading!\n");
-
-		gameState = GameState.RUNNING;
+		setGameState(GameState.RUNNING);
 		ScreenUtils.clear(0, 0, 0, 1);
+		game.setScreen(getMainMenu());
 	}
 
 	@Override
@@ -65,8 +71,12 @@ public class Main extends Game {
 		System.exit(0);
 	}
 
-	private void setMenuScreen() {
-		game.setScreen(new MainMenu(this));
+	public MainMenu getMainMenu() {
+		return mainMenu;
+	}
+
+	public CharacterCreation getCharacterCreation() {
+		return characterCreation;
 	}
 
 	public static GameState getGameState() {
@@ -77,14 +87,17 @@ public class Main extends Game {
 		switch(state) {
 			case RUNNING:
 				gameState = GameState.RUNNING;
+				System.out.println("Game running\n");
 				break;
 
 			case PAUSED:
 				gameState = GameState.PAUSED;
+				System.out.println("Game paused!\n");
 				break;
 
 			case LOADING:
 				gameState = GameState.LOADING;
+				System.out.println("Loading...\n");
 				break;
 
 			default:
