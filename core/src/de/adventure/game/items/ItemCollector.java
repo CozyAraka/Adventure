@@ -75,6 +75,7 @@ public class ItemCollector {
         itemList.addAll(legendaryBlunt.getList());
     }
 
+    //Registriert alle Items
     public void registerItems() {
         int count = 0;
         for(Item item : itemList) {
