@@ -3,7 +3,6 @@ package de.adventure.game.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -12,9 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import de.adventure.game.Main;
 
 public class MainMenu extends ScreenBase implements Screen {
     protected final Game game;
+    protected final Main main;
     private Stage stage;
     private TextButton playButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
@@ -23,9 +24,10 @@ public class MainMenu extends ScreenBase implements Screen {
     private Skin skin;
     private Table table;
 
-    public MainMenu(final Game game) {
-        super(game, "MainMenu");
+    public MainMenu(final Game game, final Main main) {
+        super(game, main, "MainMenu");
         this.game = game;
+        this.main = main;
 
         stage = new Stage();
         font = new BitmapFont();
@@ -36,19 +38,21 @@ public class MainMenu extends ScreenBase implements Screen {
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
+
         playButton = new TextButton("Play", tbStyle);
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
-                stage.clear();
-                game.setScreen(new MainScreen(game));
+                game.setScreen(main.getCharacterCreation());
             }
         });
+
         quitButton = new TextButton("Quit", tbStyle);
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
                 dispose();
+                System.exit(0);
             }
         });
 
@@ -68,9 +72,20 @@ public class MainMenu extends ScreenBase implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        clearColorBuffer();
 
         stage.draw();
+    }
+
+    @Override
+    public void show() {
+        Gdx.graphics.setTitle("Main Menu");
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void hide() {
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
@@ -78,6 +93,5 @@ public class MainMenu extends ScreenBase implements Screen {
         skin.dispose();
         font.dispose();
         stage.dispose();
-        System.exit(0);
     }
 }

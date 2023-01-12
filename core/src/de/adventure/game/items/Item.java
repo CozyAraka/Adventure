@@ -3,6 +3,7 @@ package de.adventure.game.items;
 public class Item {
     private String name, lore;
     private double maxDurability, curDurability;
+    private int id;
 
     public enum ItemState {
         BROKEN,
@@ -49,6 +50,7 @@ public class Item {
         this.itemType = itemType;
         this.itemCategory = itemCategory;
         this.itemRarity = itemRarity;
+        id = 0;
     }
 
     public void useItem(double damage) {
@@ -97,6 +99,14 @@ public class Item {
 
     public double getCurDurability() {
         return curDurability;
+    }
+
+    public void setId(int number) {
+        id = number;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public ItemState getItemState() {
