@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.items.ItemCollector;
 import de.adventure.game.screens.CharacterCreation;
 import de.adventure.game.screens.MainMenu;
@@ -18,7 +19,10 @@ public class Main extends Game {
 	private Game game;
 
 	//Items
-	private ItemCollector collector;
+	private ItemCollector itemCollector;
+
+	//Entities
+	private EntityCollector entityCollector;
 
 	//Screens
 	private MainMenu mainMenu;
@@ -46,8 +50,12 @@ public class Main extends Game {
 		batch.end();*/
 
 		//Items
-		collector = new ItemCollector();
-		collector.registerItems();
+		itemCollector = new ItemCollector();
+		itemCollector.registerItems();
+
+		//Entities
+		entityCollector = new EntityCollector();
+		entityCollector.registerEntities();
 
 		//Screens
 		mainMenu = new MainMenu(this, this);
