@@ -56,6 +56,7 @@ public class ItemCollector {
         return null;
     }
 
+    //Fügt alle gesammelten Arrays dem Hauptarray hinzu
     public void addToList() {
         //Dummy Item
         itemList.add(new Weapon("null_item", "null", 0, 0 , 0, Item.ItemState.BROKEN, Item.ItemCategory.VALUABLE_ITEM, Item.ItemRarity.UNKNOWN, Weapon.WeaponCategory.SLASHING_WEAPON));
@@ -79,6 +80,11 @@ public class ItemCollector {
     public void registerItems() {
         int count = 0;
         for(Item item : itemList) {
+            //Schaut, ob die Instanz im array die benutzt wird, ein Objekt der Klasse ist die hinter instanceof steht
+            if(item instanceof Weapon) {
+                Weapon weapon = (Weapon) itemList.get(count);
+                System.out.println(weapon.getWeaponDamage());
+            }
             item.setId(count);
             System.out.println(item.getName() + " registered with ID: " + count);
             count++;
