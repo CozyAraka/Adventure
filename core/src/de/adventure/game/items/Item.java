@@ -1,6 +1,6 @@
 package de.adventure.game.items;
 
-public class Item {
+public abstract class Item {
     private String name, lore;
     private double maxDurability, curDurability;
     private int id;
@@ -41,6 +41,7 @@ public class Item {
     private ItemRarity itemRarity;
 
     //TODO Sprites
+    //"Base" Item was alle weiteren Item Klassen wie auch Weapon benutzen
     public Item(String name, String lore, double maxDurability, double curDurability, ItemState itemState, ItemType itemType, ItemCategory itemCategory, ItemRarity itemRarity) {
         this.name = name;
         this.lore = lore;

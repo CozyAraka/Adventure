@@ -10,8 +10,9 @@ import de.adventure.game.Main;
 public class ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
-    private String name;
+    private final String name;
 
+    //Neuer Screen mit einem Namen und der Game instanz
     public ScreenBase(Game game, Main main, String name){
         this.game = game;
         this.main = main;
@@ -19,6 +20,7 @@ public class ScreenBase implements Screen {
 
     }
 
+    //Leert den Pixel buffer des Programms, dies muss in jeder Render Methode vorhanden sein, damit sich nichts dupliziert
     public void clearColorBuffer() {
         if(Gdx.graphics.isGL30Available()) {
             Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);

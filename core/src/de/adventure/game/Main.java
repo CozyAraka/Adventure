@@ -1,21 +1,21 @@
 package de.adventure.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.items.ItemCollector;
 import de.adventure.game.screens.CharacterCreation;
 import de.adventure.game.screens.MainMenu;
 
 public class Main extends Game {
+	//Debug
+	private boolean debug;
+
 	//LibGDX
 	private BitmapFont font;
 	private SpriteBatch batch;
-	private FitViewport viewport;
 	private Game game;
 
 	//Items
@@ -35,15 +35,18 @@ public class Main extends Game {
 	}
 	private static GameState gameState;
 
+	public Main(boolean debug) {
+		this.debug = debug;
+	}
+
 	@Override
-	public void create () {
+	public void create() {
 		setGameState(GameState.LOADING);
 
 		//GDX
 		game = this;
 		font = new BitmapFont();
 		batch = new SpriteBatch();
-		viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		/*batch.begin();
 		font.draw(batch, "Loading...", (float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2);
@@ -67,12 +70,12 @@ public class Main extends Game {
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		super.render();
 	}
 
 	@Override
-	public void dispose () {
+	public void dispose() {
 		batch.dispose();
 		font.dispose();
 		super.dispose();
@@ -87,8 +90,12 @@ public class Main extends Game {
 		return characterCreation;
 	}
 
-	public static GameState getGameState() {
+	public GameState getGameState() {
 		return gameState;
+	}
+
+	public boolean isDebug() {
+		return debug;
 	}
 
 	public static void setGameState(GameState state) {
