@@ -2,32 +2,30 @@ package de.adventure.game.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 
-public class MainMenu extends ScreenBase implements Screen {
+public class MapScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
     private final Stage stage;
-    private final TextButton playButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
     private final Skin skin;
-    private final Table table;
+    private final Table table, tableMap;
 
     private Audio mainMusic;
 
     //Kreiert das MainMenu
-    public MainMenu(final Game game, final Main main) {
-        super(game, main, "MainMenu");
+    public MapScreen(final Game game, final Main main) {
+        super(game, main, "MainPlayingScreen");
         this.game = game;
         this.main = main;
 
@@ -41,43 +39,19 @@ public class MainMenu extends ScreenBase implements Screen {
         table = new Table();
         table.setBounds(1, 1, Gdx.graphics.getWidth() - 1, Gdx.graphics.getHeight() - 1);
 
-        tbStyle = new TextButton.TextButtonStyle();
-        tbStyle.font = font;
+        tableMap = new Table();
+        tableMap.setBounds(50, 50, Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 100);
+        tableMap.setY(50);
+        tableMap.setX(50);
 
-        playButton = new TextButton("Play", tbStyle);
-        //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
-        playButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                game.setScreen(main.getCharacterCreation());
-            }
-        });
-
-        quitButton = new TextButton("Quit", tbStyle);
-        quitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                dispose();
-                System.exit(0);
-            }
-        });
-
-
-        table.add(playButton);
-        playButton.getLabel().setFontScale(5F);
-        //Ist wie CSS (Erstellt praktisch eine Border um den Button wo nichts anderes hin kann (Objekte in Table))
-        playButton.pad(50F, 50F, 50F, 50F);
-
-        table.add(quitButton);
-        quitButton.getLabel().setFontScale(5F);
-        quitButton.pad(50F, 50F, 50F, 50F);
-
-        //Debug codde
+        //Debug code
         if(main.isDebug()) {
             stage.setDebugAll(true);
         }
 
         stage.addActor(table);
+        stage.addActor(tableMap);
+
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
 
@@ -88,6 +62,13 @@ public class MainMenu extends ScreenBase implements Screen {
     public void render(float delta) {
         clearColorBuffer();
 
+        if(Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            game.setScreen(main.getMainPlayingScreen());
+
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(main.getMainPlayingScreen());
+        }
         //"Malt" alles auf den screen
         stage.draw();
     }
@@ -96,7 +77,7 @@ public class MainMenu extends ScreenBase implements Screen {
     @Override
     public void show() {
         mainMusic.play();
-        Gdx.graphics.setTitle("Main Menu");
+        Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
     }
 
