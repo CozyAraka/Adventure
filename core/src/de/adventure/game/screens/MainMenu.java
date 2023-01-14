@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import de.adventure.game.Main;
+import de.adventure.game.audio.Audio;
 
 public class MainMenu extends ScreenBase implements Screen {
     protected final Game game;
@@ -22,11 +23,15 @@ public class MainMenu extends ScreenBase implements Screen {
     private final Skin skin;
     private final Table table;
 
+    private Audio mainMusic;
+
     //Kreiert das MainMenu
     public MainMenu(final Game game, final Main main) {
         super(game, main, "MainMenu");
         this.game = game;
         this.main = main;
+
+        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true);
 
         stage = new Stage();
         font = new BitmapFont();
@@ -90,6 +95,7 @@ public class MainMenu extends ScreenBase implements Screen {
     //Wird ein einziges Mal aufgerufen, und zwar beim switchen zu diesem screen (ist wie die Methode create())
     @Override
     public void show() {
+        mainMusic.play();
         Gdx.graphics.setTitle("Main Menu");
         Gdx.input.setInputProcessor(stage);
     }
@@ -97,6 +103,7 @@ public class MainMenu extends ScreenBase implements Screen {
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
     @Override
     public void hide() {
+        mainMusic.stop();
         Gdx.input.setInputProcessor(null);
     }
 

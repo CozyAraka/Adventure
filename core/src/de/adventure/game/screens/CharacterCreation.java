@@ -14,14 +14,18 @@ import de.adventure.game.Main;
 public class CharacterCreation extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
+
     private Stage stage;
     private BitmapFont font;
     private Skin skin;
-    private Table tableButton, tableText;
-    private TextButton button;
+    private Table tableButtonStart, tableTextName, tableTextLooks, tablePictureChara, tableButtonArrow, tableTextLookNumber;
+    private TextButton buttonStart, buttonArrowRight, buttonArrowLeft;
     private TextButton.TextButtonStyle tbStyle;
-    private TextField textFieldCharName, textFieldNameHint;
+    private TextField textFieldCharName, textFieldNameHint, textFieldCharAussehen, textFieldLookNumber;
     private TextField.TextFieldStyle tfStyle;
+
+    private String input;
+    private int lookCount, lookAvailable;
 
     //Siehe Klasse "MainMenu" für Erklärungen
     public CharacterCreation(final Game game, final Main main) {
@@ -30,59 +34,128 @@ public class CharacterCreation extends ScreenBase implements Screen {
         this.main = main;
 
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
 
+        //Testing purposes
+        lookCount = 1;
+        lookAvailable = 5;
+
+        //Placeholder
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
-        //TODO Eigene Skins für Buttons und Textfeldder
+        //TODO Eigene Skins für Buttons und Textfelder
         skin = new Skin();
 
-        tableButton = new Table();
-        tableButton.setBounds(0, 0, 100, 50);
-        tableButton.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButton.getWidth() / 2));
-        tableButton.setY(250F);
+        tableButtonStart = new Table();
+        tableButtonStart.setBounds(0, 0, 100, 50);
+        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
+        tableButtonStart.setY(150F);
 
-        tableText = new Table();
-        tableText.setBounds(0, 0, 500, 50);
-        tableText.setX((float) (Gdx.graphics.getWidth() / 2) - (tableText.getWidth() / 2));
-        tableText.setY(500F);
+        tableButtonArrow = new Table();
+        tableButtonArrow.setBounds(0, 0, 400, 50);
+        tableButtonArrow.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonArrow.getWidth() / 2));
+        tableButtonArrow.setY(575F);
+
+        tableTextLookNumber = new Table();
+        tableTextLookNumber.setBounds(0, 0, 50, 50);
+        tableTextLookNumber.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextLookNumber.getWidth() / 2));
+        tableTextLookNumber.setY(400F);
+
+        tableTextName = new Table();
+        tableTextName.setBounds(0, 0, 500, 50);
+        tableTextName.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextName.getWidth() / 2));
+        tableTextName.setY(850F);
+
+        tableTextLooks = new Table();
+        tableTextLooks.setBounds(0, 0, 500, 50);
+        tableTextLooks.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextLooks.getWidth() / 2));
+        tableTextLooks.setY(800F);
+
+        tablePictureChara = new Table();
+        tablePictureChara.setBounds(0, 0, 400, 400);
+        tablePictureChara.setX((float) (Gdx.graphics.getWidth() / 2) - (tablePictureChara.getWidth() / 2));
+        tablePictureChara.setY(400F);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
 
         tfStyle = new TextField.TextFieldStyle();
         tfStyle.font = font;
-        tfStyle.font.getData().setScale(2.5F);
+        tfStyle.font.getData().setScale(1.5F);
         tfStyle.fontColor = Color.WHITE;
 
         textFieldNameHint = new TextField("Wähle deinen Namen:", tfStyle);
         textFieldNameHint.setDisabled(true);
-        tableText.add(textFieldNameHint);
+        tableTextName.add(textFieldNameHint).width(250F).height(30F);
 
-        textFieldCharName = new TextField("Hellu", tfStyle);
-        textFieldCharName.setBounds(textFieldCharName.getX(), textFieldCharName.getY(), 20F, 5F);
-        textFieldCharName.setMaxLength(16);
-        tableText.add(textFieldCharName);
+        textFieldCharName = new TextField("", tfStyle);
+        textFieldCharName.setMaxLength(20);
+        tableTextName.add(textFieldCharName).width(300F).height(30F);
 
-        button = new TextButton("Start", tbStyle);
-        button.addListener(new ChangeListener() {
+        textFieldCharAussehen = new TextField("Wähle dein Aussehen:", tfStyle);
+        textFieldCharAussehen.setDisabled(true);
+        tableTextLooks.add(textFieldCharAussehen).width(250F).height(30F);
+
+        textFieldLookNumber = new TextField(" " + lookCount + "/" + lookAvailable, tfStyle);
+        textFieldLookNumber.setDisabled(true);
+        tableTextLookNumber.add(textFieldLookNumber).width(50F).height(50F);
+
+        buttonStart = new TextButton("Start", tbStyle);
+        buttonStart.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
+                input = textFieldCharName.getText();
+                System.out.println(input);
                 game.setScreen(main.getMainMenu());
             }
         });
-        button.getLabel().setFontScale(5F);
-        button.pad(50F, 50F, 50F, 50F);
-        tableButton.add(button);
+        buttonStart.getLabel().setFontScale(5F);
+        buttonStart.pad(50F, 50F, 50F, 50F);
+        tableButtonStart.add(buttonStart);
+
+        buttonArrowLeft = new TextButton("<", tbStyle);
+        buttonArrowLeft.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Testing
+                lookCount--;
+                if(lookCount < 1) {
+                    lookCount = lookAvailable;
+                }
+                updateText(textFieldLookNumber, " " + lookCount + "/" + lookAvailable);
+            }
+        });
+        buttonArrowLeft.getLabel().setFontScale(5F);
+        buttonArrowLeft.pad(0F, 0F, 0F, 120F);
+        tableButtonArrow.add(buttonArrowLeft);
+
+        buttonArrowRight = new TextButton(">", tbStyle);
+        buttonArrowRight.addListener(new ChangeListener() {
+            @Override
+            public void changed (ChangeEvent event, Actor actor) {
+                //Testing
+                lookCount++;
+                if(lookCount > lookAvailable) {
+                    lookCount = 1;
+                }
+                updateText(textFieldLookNumber, " " + lookCount + "/" + lookAvailable);
+            }
+        });
+        buttonArrowRight.getLabel().setFontScale(5F);
+        buttonArrowRight.pad(0F, 120F, 0F, 0F);
+        tableButtonArrow.add(buttonArrowRight);
 
         //Debug code
         if(main.isDebug()) {
             stage.setDebugAll(true);
         }
 
-        stage.addActor(tableButton);
-        stage.addActor(tableText);
+        stage.addActor(tableButtonStart);
+        stage.addActor(tableButtonArrow);
+        stage.addActor(tableTextName);
+        stage.addActor(tableTextLooks);
+        stage.addActor(tablePictureChara);
+        stage.addActor(tableTextLookNumber);
     }
 
     @Override
@@ -109,5 +182,9 @@ public class CharacterCreation extends ScreenBase implements Screen {
         skin.dispose();
         font.dispose();
         stage.dispose();
+    }
+
+    public void updateText(TextField textField, String text) {
+        textField.setText(text);
     }
 }
