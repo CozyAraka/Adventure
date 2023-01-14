@@ -3,11 +3,12 @@ package de.adventure.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.items.ItemCollector;
-import de.adventure.game.screens.CharacterCreation;
-import de.adventure.game.screens.MainMenu;
+import de.adventure.game.screens.CharacterCreationScreen;
+import de.adventure.game.screens.MainMenuScreen;
+import de.adventure.game.screens.MainPlayingScreen;
+import de.adventure.game.screens.MapScreen;
 
 public class Main extends Game {
 	//Debug
@@ -25,8 +26,10 @@ public class Main extends Game {
 	private EntityCollector entityCollector;
 
 	//Screens
-	private MainMenu mainMenu;
-	private CharacterCreation characterCreation;
+	private MainMenuScreen mainMenuScreen;
+	private CharacterCreationScreen characterCreationScreen;
+	private MainPlayingScreen mainPlayingScreen;
+	private MapScreen mapScreen;
 
 	public enum GameState {
 		RUNNING,
@@ -61,11 +64,13 @@ public class Main extends Game {
 		entityCollector.registerEntities();
 
 		//Screens
-		mainMenu = new MainMenu(this, this);
-		characterCreation = new CharacterCreation(this, this);
+		mainMenuScreen = new MainMenuScreen(this, this);
+		characterCreationScreen = new CharacterCreationScreen(this, this);
+		mainPlayingScreen = new MainPlayingScreen(this, this);
+		mapScreen = new MapScreen(this, this);
 
 		setGameState(GameState.RUNNING);
-		ScreenUtils.clear(0, 0, 0, 1);
+		//ScreenUtils.clear(0, 0, 0, 1);
 		game.setScreen(getMainMenu());
 	}
 
@@ -82,12 +87,20 @@ public class Main extends Game {
 		System.exit(0);
 	}
 
-	public MainMenu getMainMenu() {
-		return mainMenu;
+	public MainMenuScreen getMainMenu() {
+		return mainMenuScreen;
 	}
 
-	public CharacterCreation getCharacterCreation() {
-		return characterCreation;
+	public CharacterCreationScreen getCharacterCreation() {
+		return characterCreationScreen;
+	}
+
+	public MainPlayingScreen getMainPlayingScreen() {
+		return mainPlayingScreen;
+	}
+
+	public MapScreen getMapScreen() {
+		return mapScreen;
 	}
 
 	public GameState getGameState() {

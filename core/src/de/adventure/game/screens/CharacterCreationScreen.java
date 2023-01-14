@@ -9,9 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import de.adventure.game.Main;
 
-public class CharacterCreation extends ScreenBase implements Screen {
+public class CharacterCreationScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
 
@@ -28,7 +29,7 @@ public class CharacterCreation extends ScreenBase implements Screen {
     private int lookCount, lookAvailable;
 
     //Siehe Klasse "MainMenu" für Erklärungen
-    public CharacterCreation(final Game game, final Main main) {
+    public CharacterCreationScreen(final Game game, final Main main) {
         super(game, main, "Character Creation");
         this.game = game;
         this.main = main;
@@ -86,18 +87,24 @@ public class CharacterCreation extends ScreenBase implements Screen {
 
         textFieldNameHint = new TextField("Wähle deinen Namen:", tfStyle);
         textFieldNameHint.setDisabled(true);
+        textFieldNameHint.setAlignment(Align.center);
         tableTextName.add(textFieldNameHint).width(250F).height(30F);
+
+        tableTextName.row();
 
         textFieldCharName = new TextField("", tfStyle);
         textFieldCharName.setMaxLength(20);
+        textFieldCharName.setAlignment(Align.center);
         tableTextName.add(textFieldCharName).width(300F).height(30F);
 
         textFieldCharAussehen = new TextField("Wähle dein Aussehen:", tfStyle);
         textFieldCharAussehen.setDisabled(true);
+        textFieldCharAussehen.setAlignment(Align.center);
         tableTextLooks.add(textFieldCharAussehen).width(250F).height(30F);
 
-        textFieldLookNumber = new TextField(" " + lookCount + "/" + lookAvailable, tfStyle);
+        textFieldLookNumber = new TextField(lookCount + "/" + lookAvailable, tfStyle);
         textFieldLookNumber.setDisabled(true);
+        textFieldLookNumber.setAlignment(Align.center);
         tableTextLookNumber.add(textFieldLookNumber).width(50F).height(50F);
 
         buttonStart = new TextButton("Start", tbStyle);
@@ -106,7 +113,7 @@ public class CharacterCreation extends ScreenBase implements Screen {
             public void changed (ChangeEvent event, Actor actor) {
                 input = textFieldCharName.getText();
                 System.out.println(input);
-                game.setScreen(main.getMainMenu());
+                game.setScreen(main.getMainPlayingScreen());
             }
         });
         buttonStart.getLabel().setFontScale(5F);
