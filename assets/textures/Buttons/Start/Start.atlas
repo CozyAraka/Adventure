@@ -1,0 +1,27 @@
+
+Start.png
+size: 1024, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+8xstart
+  rotate: false
+  xy: 1, 129
+  size: 520, 136
+  orig: 520, 136
+  offset: 0, 0
+  index: -1
+8xstarthover
+  rotate: false
+  xy: 1, 405
+  size: 550, 144
+  orig: 550, 144
+  offset: 0, 0
+  index: -1
+8xstartpressed
+  rotate: false
+  xy: 1, 267
+  size: 520, 136
+  orig: 520, 136
+  offset: 0, 0
+  index: -1

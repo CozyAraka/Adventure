@@ -1,0 +1,20 @@
+
+Play.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+8xplay
+  rotate: false
+  xy: 1, 181
+  size: 452, 136
+  orig: 452, 136
+  offset: 0, 0
+  index: -1
+8xplaypressed
+  rotate: false
+  xy: 1, 319
+  size: 456, 136
+  orig: 456, 136
+  offset: 0, 0
+  index: -1
