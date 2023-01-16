@@ -5,17 +5,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import de.adventure.game.Main;
+import de.adventure.game.input.HoverListener;
 
 public class CharacterCreationScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
+
+    private SpriteBatch batch;
 
     private Stage stage;
     private BitmapFont font;
@@ -46,6 +51,8 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         //Testing purposes
         lookCount = 1;
         lookAvailable = 5;
+
+        batch = new SpriteBatch();
 
         //Placeholder
         font = new BitmapFont();
@@ -114,21 +121,6 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         textFieldLookNumber.setAlignment(Align.center);
         tableTextLookNumber.add(textFieldLookNumber).width(50F).height(50F);
 
-        /*
-        buttonStart = new TextButton("Start", tbStyle);
-        buttonStart.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                input = textFieldCharName.getText();
-                System.out.println(input);
-                game.setScreen(main.getMainPlayingScreen());
-            }
-        });
-        buttonStart.getLabel().setFontScale(5F);
-        buttonStart.pad(50F, 50F, 50F, 50F);
-        tableButtonStart.add(buttonStart);
-         */
-
         buttonPlay = new Button(skinButtonPlay);
         buttonPlay.addListener(new ChangeListener() {
             @Override
@@ -136,6 +128,18 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
                 input = textFieldCharName.getText();
                 System.out.println(input);
                 game.setScreen(main.getMainPlayingScreen());
+            }
+        });
+        buttonPlay.addListener(new HoverListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        buttonPlay.addListener(new HoverListener() {
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.exit(event, x, y, pointer, fromActor);
             }
         });
         tableButtonStart.add(buttonPlay);
@@ -190,6 +194,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         clearColorBuffer();
 
         stage.draw();
+        stage.act();
     }
 
     @Override
