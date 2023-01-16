@@ -1,8 +1,8 @@
 {
-com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
-	default: {
-		up: 8xplay
-		down: 8xplaypressed
+	com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+		default: {
+			up: 8xplay
+			over: 8xplaypressed
+		}
 	}
-}
 }

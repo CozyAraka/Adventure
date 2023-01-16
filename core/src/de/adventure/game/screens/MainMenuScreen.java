@@ -5,12 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import de.adventure.game.input.HoverListener;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 
@@ -72,6 +74,18 @@ public class MainMenuScreen extends ScreenBase implements Screen {
                 System.exit(0);
             }
         });
+        quitButton.addListener(new HoverListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        quitButton.addListener(new HoverListener() {
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.exit(event, x, y, pointer, fromActor);
+            }
+        });
         tableButtonQuit.add(quitButton).pad(0F, 0F, 0F, 0F);
 
         //Debug code
@@ -94,6 +108,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
 
         //"Malt" alles auf den screen
         stage.draw();
+        stage.act();
         //stage.act(delta);
     }
 

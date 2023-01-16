@@ -14,7 +14,7 @@ repeat: none
 8xplaypressed
   rotate: false
   xy: 1, 319
-  size: 456, 136
-  orig: 456, 136
+  size: 452, 136
+  orig: 452, 136
   offset: 0, 0
   index: -1
