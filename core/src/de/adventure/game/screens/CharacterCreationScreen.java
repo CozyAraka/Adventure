@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -18,12 +19,18 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
 
     private Stage stage;
     private BitmapFont font;
-    private Skin skin;
+    private Skin skinButtonPlay;
     private Table tableButtonStart, tableTextName, tableTextLooks, tablePictureChara, tableButtonArrow, tableTextLookNumber;
+
     private TextButton buttonStart, buttonArrowRight, buttonArrowLeft;
     private TextButton.TextButtonStyle tbStyle;
+
+    private Button buttonPlay;
+
     private TextField textFieldCharName, textFieldNameHint, textFieldCharAussehen, textFieldLookNumber;
     private TextField.TextFieldStyle tfStyle;
+
+    private TextureAtlas taButtonPlay;
 
     private String input;
     private int lookCount, lookAvailable;
@@ -45,7 +52,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         font.setColor(Color.WHITE);
 
         //TODO Eigene Skins für Buttons und Textfelder
-        skin = new Skin();
+        skinButtonPlay = new Skin(Gdx.files.internal("textures/Buttons/Play/Play.json"));
 
         tableButtonStart = new Table();
         tableButtonStart.setBounds(0, 0, 100, 50);
@@ -107,6 +114,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         textFieldLookNumber.setAlignment(Align.center);
         tableTextLookNumber.add(textFieldLookNumber).width(50F).height(50F);
 
+        /*
         buttonStart = new TextButton("Start", tbStyle);
         buttonStart.addListener(new ChangeListener() {
             @Override
@@ -119,6 +127,18 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         buttonStart.getLabel().setFontScale(5F);
         buttonStart.pad(50F, 50F, 50F, 50F);
         tableButtonStart.add(buttonStart);
+         */
+
+        buttonPlay = new Button(skinButtonPlay);
+        buttonPlay.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                input = textFieldCharName.getText();
+                System.out.println(input);
+                game.setScreen(main.getMainPlayingScreen());
+            }
+        });
+        tableButtonStart.add(buttonPlay);
 
         buttonArrowLeft = new TextButton("<", tbStyle);
         buttonArrowLeft.addListener(new ChangeListener() {
@@ -186,7 +206,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
 
     @Override
     public void dispose () {
-        skin.dispose();
+        skinButtonPlay.dispose();
         font.dispose();
         stage.dispose();
     }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -17,11 +18,11 @@ public class MainMenuScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
     private final Stage stage;
-    private final TextButton playButton, quitButton;
+    private final Button startButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
-    private final Skin skin;
-    private final Table table;
+    private final Skin skinButtonStart, skinButtonQuit;
+    private final Table tableButtonStart, tableButtonQuit;
 
     private Audio mainMusic;
 
@@ -35,25 +36,35 @@ public class MainMenuScreen extends ScreenBase implements Screen {
 
         stage = new Stage();
         font = new BitmapFont();
-        skin = new Skin();
+
+        skinButtonStart = new Skin(Gdx.files.internal("textures/Buttons/Start/Start.json"));
+        skinButtonQuit = new Skin(Gdx.files.internal("textures/Buttons/Quit/Quit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
-        table = new Table();
-        table.setBounds(1, 1, Gdx.graphics.getWidth() - 1, Gdx.graphics.getHeight() - 1);
+        tableButtonStart = new Table();
+        tableButtonStart.setBounds(0, 0, 100, 50);
+        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
+        tableButtonStart.setY(600F);
+
+        tableButtonQuit = new Table();
+        tableButtonQuit.setBounds(0, 0, 100, 50);
+        tableButtonQuit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonQuit.getWidth() / 2));
+        tableButtonQuit.setY(400F);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
 
-        playButton = new TextButton("Play", tbStyle);
+        startButton = new Button(skinButtonStart);
         //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
-        playButton.addListener(new ChangeListener() {
+        startButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
                 game.setScreen(main.getCharacterCreation());
             }
         });
+        tableButtonStart.add(startButton).pad(0F, 0F, 0F, 0F);
 
-        quitButton = new TextButton("Quit", tbStyle);
+        quitButton = new Button(skinButtonQuit);
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
@@ -61,23 +72,15 @@ public class MainMenuScreen extends ScreenBase implements Screen {
                 System.exit(0);
             }
         });
-
-
-        table.add(playButton);
-        playButton.getLabel().setFontScale(5F);
-        //Ist wie CSS (Erstellt praktisch eine Border um den Button wo nichts anderes hin kann (Objekte in Table))
-        playButton.pad(50F, 50F, 50F, 50F);
-
-        table.add(quitButton);
-        quitButton.getLabel().setFontScale(5F);
-        quitButton.pad(50F, 50F, 50F, 50F);
+        tableButtonQuit.add(quitButton).pad(0F, 0F, 0F, 0F);
 
         //Debug code
         if(main.isDebug()) {
             stage.setDebugAll(true);
         }
 
-        stage.addActor(table);
+        stage.addActor(tableButtonStart);
+        stage.addActor(tableButtonQuit);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
@@ -91,6 +94,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
 
         //"Malt" alles auf den screen
         stage.draw();
+        //stage.act(delta);
     }
 
     //Wird ein einziges Mal aufgerufen, und zwar beim switchen zu diesem screen (ist wie die Methode create())
@@ -110,7 +114,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
 
     @Override
     public void dispose () {
-        skin.dispose();
+        skinButtonStart.dispose();
         font.dispose();
         stage.dispose();
     }
