@@ -76,7 +76,7 @@ public class MapScreen extends ScreenBase implements Screen {
     //Wird ein einziges Mal aufgerufen, und zwar beim switchen zu diesem screen (ist wie die Methode create())
     @Override
     public void show() {
-        mainMusic.play();
+        //mainMusic.play();
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
     }
@@ -84,7 +84,7 @@ public class MapScreen extends ScreenBase implements Screen {
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
     @Override
     public void hide() {
-        mainMusic.stop();
+        //mainMusic.stop();
         Gdx.input.setInputProcessor(null);
     }
 

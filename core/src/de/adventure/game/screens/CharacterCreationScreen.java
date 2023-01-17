@@ -153,7 +153,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
                 if(lookCount < 1) {
                     lookCount = lookAvailable;
                 }
-                updateText(textFieldLookNumber, " " + lookCount + "/" + lookAvailable);
+                updateText(textFieldLookNumber, lookCount + "/" + lookAvailable);
             }
         });
         buttonArrowLeft.getLabel().setFontScale(5F);
@@ -169,7 +169,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
                 if(lookCount > lookAvailable) {
                     lookCount = 1;
                 }
-                updateText(textFieldLookNumber, " " + lookCount + "/" + lookAvailable);
+                updateText(textFieldLookNumber, lookCount + "/" + lookAvailable);
             }
         });
         buttonArrowRight.getLabel().setFontScale(5F);
