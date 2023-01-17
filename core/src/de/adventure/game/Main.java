@@ -5,10 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.items.ItemCollector;
-import de.adventure.game.screens.CharacterCreationScreen;
-import de.adventure.game.screens.MainMenuScreen;
-import de.adventure.game.screens.MainPlayingScreen;
-import de.adventure.game.screens.MapScreen;
+import de.adventure.game.screens.*;
 
 public class Main extends Game {
 	//Debug
@@ -30,6 +27,7 @@ public class Main extends Game {
 	private CharacterCreationScreen characterCreationScreen;
 	private MainPlayingScreen mainPlayingScreen;
 	private MapScreen mapScreen;
+	private PauseScreen pauseScreen;
 
 	public enum GameState {
 		RUNNING,
@@ -68,6 +66,7 @@ public class Main extends Game {
 		characterCreationScreen = new CharacterCreationScreen(this, this);
 		mainPlayingScreen = new MainPlayingScreen(this, this);
 		mapScreen = new MapScreen(this, this);
+		pauseScreen = new PauseScreen(this, this);
 
 		setGameState(GameState.RUNNING);
 		//ScreenUtils.clear(0, 0, 0, 1);
@@ -101,6 +100,10 @@ public class Main extends Game {
 
 	public MapScreen getMapScreen() {
 		return mapScreen;
+	}
+
+	public PauseScreen getPauseScreen() {
+		return pauseScreen;
 	}
 
 	public GameState getGameState() {

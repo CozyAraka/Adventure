@@ -6,29 +6,32 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
+import de.adventure.game.input.HoverListener;
 
-public class MainPlayingScreen extends ScreenBase implements Screen {
+public class PauseScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
     private final Stage stage;
-    private final TextButton playButton, quitButton;
+    private final Button resumeButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
-    private final Skin skin;
-    private final Table table, tableMap, tableInventory;
+    private final Skin skinButtonStart, skinButtonQuit;
+    private final Table tableButtonStart, tableButtonQuit;
 
     private Audio mainMusic;
 
     //Kreiert das MainMenu
-    public MainPlayingScreen(final Game game, final Main main) {
-        super(game, main, "MainPlayingScreen");
+    public PauseScreen(final Game game, final Main main) {
+        super(game, main, "MainMenu");
         this.game = game;
         this.main = main;
 
@@ -36,35 +39,36 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
 
         stage = new Stage();
         font = new BitmapFont();
-        skin = new Skin();
+
+        skinButtonStart = new Skin(Gdx.files.internal("textures/Buttons/Start/Start.json"));
+        skinButtonQuit = new Skin(Gdx.files.internal("textures/Buttons/Quit/Quit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
-        table = new Table();
-        table.setBounds(1, 1, Gdx.graphics.getWidth() - 1, Gdx.graphics.getHeight() - 1);
+        tableButtonStart = new Table();
+        tableButtonStart.setBounds(0, 0, 100, 50);
+        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
+        tableButtonStart.setY(600F);
 
-        tableMap = new Table();
-        tableMap.setBounds(0, 0, 250, 250);
-        tableMap.setX(25F);
-        tableMap.setY(Gdx.graphics.getHeight() - 275);
-
-        tableInventory = new Table();
-        tableInventory.setBounds(0, 0, 50, 400);
-        tableInventory.setX(25F);
-        tableInventory.setY(Gdx.graphics.getHeight() - 800);
+        tableButtonQuit = new Table();
+        tableButtonQuit.setBounds(0, 0, 100, 50);
+        tableButtonQuit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonQuit.getWidth() / 2));
+        tableButtonQuit.setY(400F);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
 
-        playButton = new TextButton("Play", tbStyle);
+        //TODO Muss noch auf ein "resume" geändert werden
+        resumeButton = new Button(skinButtonStart);
         //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
-        playButton.addListener(new ChangeListener() {
+        resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
-                game.setScreen(main.getCharacterCreation());
+                game.setScreen(main.getMainPlayingScreen());
             }
         });
+        tableButtonStart.add(resumeButton).pad(0F, 0F, 0F, 0F);
 
-        quitButton = new TextButton("Quit", tbStyle);
+        quitButton = new Button(skinButtonQuit);
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
@@ -72,25 +76,27 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
                 System.exit(0);
             }
         });
-
-
-        table.add(playButton);
-        playButton.getLabel().setFontScale(5F);
-        //Ist wie CSS (Erstellt praktisch eine Border um den Button wo nichts anderes hin kann (Objekte in Table))
-        playButton.pad(50F, 50F, 50F, 50F);
-
-        table.add(quitButton);
-        quitButton.getLabel().setFontScale(5F);
-        quitButton.pad(50F, 50F, 50F, 50F);
+        quitButton.addListener(new HoverListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.enter(event, x, y, pointer, fromActor);
+            }
+        });
+        quitButton.addListener(new HoverListener() {
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                super.exit(event, x, y, pointer, fromActor);
+            }
+        });
+        tableButtonQuit.add(quitButton).pad(0F, 0F, 0F, 0F);
 
         //Debug code
         if(main.isDebug()) {
             stage.setDebugAll(true);
         }
 
-        stage.addActor(table);
-        stage.addActor(tableMap);
-        stage.addActor(tableInventory);
+        stage.addActor(tableButtonStart);
+        stage.addActor(tableButtonQuit);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
@@ -102,35 +108,31 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
     public void render(float delta) {
         clearColorBuffer();
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.M)) {
-            game.setScreen(main.getMapScreen());
-        }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.setScreen(main.getPauseScreen());
+            game.setScreen(main.getMainPlayingScreen());
         }
-
         //"Malt" alles auf den screen
         stage.draw();
+        stage.act();
+        //stage.act(delta);
     }
 
     //Wird ein einziges Mal aufgerufen, und zwar beim switchen zu diesem screen (ist wie die Methode create())
     @Override
     public void show() {
-        mainMusic.play();
-        Gdx.graphics.setTitle("Adventure");
+        Gdx.graphics.setTitle("Pause Screen");
         Gdx.input.setInputProcessor(stage);
     }
 
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
     @Override
     public void hide() {
-        //mainMusic.stop();
         Gdx.input.setInputProcessor(null);
     }
 
     @Override
     public void dispose () {
-        skin.dispose();
+        skinButtonStart.dispose();
         font.dispose();
         stage.dispose();
     }
