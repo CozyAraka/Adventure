@@ -4,13 +4,17 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 
@@ -18,11 +22,20 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
     protected final Game game;
     protected final Main main;
     private final Stage stage;
-    private final TextButton playButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
     private final Skin skin;
     private final Table table, tableMap, tableInventory;
+
+    private int x, y;
+
+    //Map Rendering
+    private TiledMap tiledMap;
+    private TiledMapTileLayer tileLayer;
+    private OrthogonalTiledMapRenderer mapRenderer;
+    private OrthographicCamera orthoCam;
+
+    private ShapeRenderer shapeRenderer;
 
     private Audio mainMusic;
 
@@ -32,7 +45,30 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
         this.game = game;
         this.main = main;
 
+        //Music
         mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true);
+
+        //Positions des Spielers
+        x = 960;
+        y = 252;
+
+        //Tiled Map
+        tiledMap = new TmxMapLoader().load("map/uwu.tmx");
+        //tiledMap.getLayers().get(0).getProperties();
+
+        //TODO Collision:
+        //tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get(1);
+        //tileLayer.getCell(1,1);
+
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setAutoShapeType(true);
+
+        //Orthographic Cam
+        orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        orthoCam.translate(120*2, 168*2);
+
+        //Map Renderer
+        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, 4);
 
         stage = new Stage();
         font = new BitmapFont();
@@ -54,34 +90,6 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
-
-        playButton = new TextButton("Play", tbStyle);
-        //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
-        playButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                game.setScreen(main.getCharacterCreation());
-            }
-        });
-
-        quitButton = new TextButton("Quit", tbStyle);
-        quitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed (ChangeEvent event, Actor actor) {
-                dispose();
-                System.exit(0);
-            }
-        });
-
-
-        table.add(playButton);
-        playButton.getLabel().setFontScale(5F);
-        //Ist wie CSS (Erstellt praktisch eine Border um den Button wo nichts anderes hin kann (Objekte in Table))
-        playButton.pad(50F, 50F, 50F, 50F);
-
-        table.add(quitButton);
-        quitButton.getLabel().setFontScale(5F);
-        quitButton.pad(50F, 50F, 50F, 50F);
 
         //Debug code
         if(main.isDebug()) {
@@ -108,6 +116,34 @@ public class MainPlayingScreen extends ScreenBase implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(main.getPauseScreen());
         }
+
+        int[] layerToRender1 = {0};
+        int[] layerToRender2 = {1, 2};
+
+        orthoCam.update();
+        mapRenderer.setView(orthoCam);
+        mapRenderer.render(layerToRender1);
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            y += 48;
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            x -= 48;
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            y -= 48;
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+            x += 48;
+        }
+
+        shapeRenderer.begin();
+        main.getPlayer().updatePosition(x, y);
+        main.getPlayer().draw(shapeRenderer);
+        //shapeRenderer.rect(x, y, 12*4, 12*4);
+        shapeRenderer.end();
+
+        mapRenderer.render(layerToRender2);
 
         //"Malt" alles auf den screen
         stage.draw();

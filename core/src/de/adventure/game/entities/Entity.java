@@ -2,7 +2,10 @@ package de.adventure.game.entities;
 
 public class Entity {
     private String name, description;
+
     private int Id;
+
+    private float xCord, yCord;
 
     public enum EntityType {
         HERO,
@@ -18,11 +21,14 @@ public class Entity {
     }
     private EntityStatus entityStatus;
 
-    public Entity(String name, String description, EntityType entityType, EntityStatus entityStatus) {
+    public Entity(String name, String description, EntityType entityType, EntityStatus entityStatus, float xCord, float yCord) {
         this.name = name;
         this.description = description;
         this.entityType = entityType;
         this.entityStatus = entityStatus;
+        this.xCord = xCord;
+        this.yCord = yCord;
+
         Id = 0;
 
     }
@@ -53,5 +59,19 @@ public class Entity {
 
     public int getId() {
         return Id;
+    }
+
+    public float getXCord() {
+        return xCord;
+    }
+
+    public float getYCord() {
+        return yCord;
+    }
+
+    public void updatePosition(float x, float y) {
+        xCord = x;
+        yCord = y;
+
     }
 }

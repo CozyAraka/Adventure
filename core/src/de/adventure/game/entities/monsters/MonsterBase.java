@@ -7,7 +7,7 @@ public class MonsterBase extends Entity {
 
     //"Base" Monster was alle normalen Monster Klassen benutzen, fasst alle allgemeinen Methoden zusammen (z.B. ein Objekt der Klasse ThiefMonster kann auch methoden aus dieser Klasse benutzen wie z.B. getHitpoints()
     public MonsterBase(String name, String description, double damage, double hitpoints, double agility, double defense, double mana, double luck, double accuracy) {
-        super(name, description, EntityType.MONSTER, EntityStatus.IDLE);
+        super(name, description, EntityType.MONSTER, EntityStatus.IDLE, 0F, 0F);
 
         this.damage = damage;
         this.hitpoints = hitpoints;

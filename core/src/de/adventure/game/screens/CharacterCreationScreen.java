@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import de.adventure.game.Main;
+import de.adventure.game.entities.player.Player;
 import de.adventure.game.input.HoverListener;
 
 public class CharacterCreationScreen extends ScreenBase implements Screen {
@@ -127,6 +128,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 input = textFieldCharName.getText();
                 System.out.println(input);
+                main.setPlayer(new Player(input, 0, 0, lookCount));
                 game.setScreen(main.getMainPlayingScreen());
             }
         });

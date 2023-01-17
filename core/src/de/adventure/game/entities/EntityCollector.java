@@ -21,7 +21,7 @@ public class EntityCollector {
 
     //Fügt alle gesammelten Arrays dem Hauptarray hinzu
     public void addToList() {
-        entityList.add(new Entity("null_entity", "null", Entity.EntityType.NPC, Entity.EntityStatus.DEAD));
+        entityList.add(new Entity("null_entity", "null", Entity.EntityType.NPC, Entity.EntityStatus.DEAD, 0F, 0F));
 
         entityList.addAll(thiefList.getList());
     }

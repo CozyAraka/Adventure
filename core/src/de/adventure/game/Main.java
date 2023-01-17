@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import de.adventure.game.entities.EntityCollector;
+import de.adventure.game.entities.player.Player;
 import de.adventure.game.items.ItemCollector;
 import de.adventure.game.screens.*;
 
@@ -29,6 +30,9 @@ public class Main extends Game {
 	private MapScreen mapScreen;
 	private PauseScreen pauseScreen;
 
+	//Player
+	private Player player;
+
 	public enum GameState {
 		RUNNING,
 		PAUSED,
@@ -43,6 +47,9 @@ public class Main extends Game {
 	@Override
 	public void create() {
 		setGameState(GameState.LOADING);
+
+		//Player
+		player = new Player("", 0F, 0F, 0);
 
 		//GDX
 		game = this;
@@ -108,6 +115,14 @@ public class Main extends Game {
 
 	public GameState getGameState() {
 		return gameState;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 	public boolean isDebug() {
