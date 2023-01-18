@@ -100,7 +100,8 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Orthographic Cam
         orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 80, (float) Gdx.graphics.getHeight() / 80);
+        //Cam zoom (für das spiel später Gdx.graphics.getWidth() & getHeight() / 80!!!)
+        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 50, (float) Gdx.graphics.getHeight() / 50);
 
         //Viewport
         //viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthoCam);
