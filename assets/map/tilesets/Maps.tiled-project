@@ -1,0 +1,14 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+    ],
+    "extensionsPath": "extensions",
+    "folders": [
+        ".",
+        "Dungeons",
+        "General",
+        "Mapset"
+    ],
+    "propertyTypes": [
+    ]
+}

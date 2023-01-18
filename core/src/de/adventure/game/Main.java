@@ -1,6 +1,7 @@
 package de.adventure.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import de.adventure.game.entities.EntityCollector;
@@ -47,6 +48,7 @@ public class Main extends Game {
 	@Override
 	public void create() {
 		setGameState(GameState.LOADING);
+		Gdx.graphics.setVSync(true);
 
 		//Player
 		player = new Player("", 0F, 0F, 0);

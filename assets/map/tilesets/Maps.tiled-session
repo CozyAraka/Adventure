@@ -1,0 +1,88 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "Dungeons/decorative.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Dungeons/dungeon.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Cliff.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Environment.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Ground misc.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Ground.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Rocks.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Stairs and Entrance.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Stone Path.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Trees.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Water Flora.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "General/Water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "D:/Desktop/Adventure/assets/map",
+    "last.imagePath": "D:/Desktop/Adventure/assets/map/tilesets/Dungeons",
+    "map.height": 60,
+    "map.lastUsedExportFilter": "Alle Dateien (*)",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 80,
+    "openFiles": [
+    ],
+    "project": "Maps.tiled-project",
+    "recentFiles": [
+        "General/Environment.tsx",
+        "Dungeons/dungeon.tsx",
+        "Dungeons/decorative.tsx",
+        "General/Cliff.tsx",
+        "General/Stone Path.tsx",
+        "General/Water.tsx",
+        "General/Water Flora.tsx",
+        "General/Stairs and Entrance.tsx",
+        "General/Rocks.tsx",
+        "General/Ground misc.tsx",
+        "General/Trees.tsx",
+        "General/Ground.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
