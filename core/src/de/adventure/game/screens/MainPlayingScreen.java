@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
@@ -40,9 +40,13 @@ public class MainPlayingScreen extends ScreenBase {
 
     //Map Rendering
     private TiledMap tiledMap;
+    private TiledMap desert_map_1;
+
     private TiledMapTileLayer collisionLayer;
+    private TiledMapTileLayer desertCollision;
     private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera orthoCam;
+    private FitViewport viewport;
 
     //Physics
     private Player player;
@@ -68,18 +72,18 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Map width & height (tiles)
         mapWidth = 80F;
-        mapHeight = 45F;
+        mapHeight = 60F;
 
         //TileSize
-        unitScale = 1/12F;
-        pixelTileSize = 12;
+        unitScale = 1/16F;
+        pixelTileSize = 16;
 
         //Positions des Spielers
         x = 0;
         y = 0;
 
         //Tiled Map
-        tiledMap = new TmxMapLoader().load("map/uwu.tmx");
+        tiledMap = new TmxMapLoader().load("map/mapFinal.tmx");
 
         //Collision Layer
         collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid");
@@ -96,7 +100,10 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Orthographic Cam
         orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        orthoCam.setToOrtho(false, mapWidth / 3, mapHeight / 3);
+        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 80, (float) Gdx.graphics.getHeight() / 80);
+
+        //Viewport
+        //viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthoCam);
 
         //Map Renderer
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
@@ -138,6 +145,7 @@ public class MainPlayingScreen extends ScreenBase {
     public void render(float delta) {
         clearColorBuffer();
 
+        //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
         int[] layerToRender1 = {0};
         int[] layerToRender2 = {1, 2};
 
@@ -146,7 +154,6 @@ public class MainPlayingScreen extends ScreenBase {
         orthoCam.update();
         mapRenderer.setView(orthoCam);
 
-        //
         mapRenderer.render(layerToRender1);
 
         debugRender(main.isDebug());
@@ -217,18 +224,12 @@ public class MainPlayingScreen extends ScreenBase {
                 bodyDefinition.angularDamping = 0F;
                 System.out.println(bodyDefinition);
 
-                /*
-                EdgeShape edgeShape = new EdgeShape();
-                edgeShape.set(0, 0, 1F, 1F);
-                edgeShape.setRadius(1F);*/
-
                 shape.setAsBox(0.5F, 0.5F);
 
                 FixtureDef fixtureDefinition = new FixtureDef();
                 fixtureDefinition.shape = shape;
                 fixtureDefinition.friction = 0F;
                 fixtureDefinition.restitution = 0F;
-                //fixtureDefinition.density = 1F;
 
                 bodies.add(world.createBody(bodyDefinition));
                 bodies.get(index).createFixture(fixtureDefinition);
@@ -246,23 +247,6 @@ public class MainPlayingScreen extends ScreenBase {
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
         bodies = createCollisionBoxes(collisionLayer);
-        for(Body body : bodies) {
-            System.out.println(body.getPosition());
-        }
-        System.out.println("---------------------------------");
-
-        Array<Body> b2 = new Array<>();
-        world.getBodies(b2);
-        for(Body body : b2) {
-            System.out.println(body.getPosition());
-        }
-        System.out.println("---------------------------------");
-
-        Array<Fixture> f = new Array<>();
-        world.getFixtures(f);
-        for(Fixture fixture : f) {
-            System.out.println(fixture.getBody());
-        }
     }
 
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
