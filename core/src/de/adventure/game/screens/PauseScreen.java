@@ -24,8 +24,8 @@ public class PauseScreen extends ScreenBase implements Screen {
     private final Button resumeButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
-    private final Skin skinButtonStart, skinButtonQuit;
-    private final Table tableButtonStart, tableButtonQuit;
+    private final Skin skinButtonResume, skinButtonQuit;
+    private final Table tableButtonResume, tableButtonQuit;
 
     private Audio mainMusic;
 
@@ -40,14 +40,14 @@ public class PauseScreen extends ScreenBase implements Screen {
         stage = new Stage();
         font = new BitmapFont();
 
-        skinButtonStart = new Skin(Gdx.files.internal("textures/Buttons/Start/Start.json"));
+        skinButtonResume = new Skin(Gdx.files.internal("textures/Buttons/Resume/Resume.json"));
         skinButtonQuit = new Skin(Gdx.files.internal("textures/Buttons/Quit/Quit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
-        tableButtonStart = new Table();
-        tableButtonStart.setBounds(0, 0, 100, 50);
-        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
-        tableButtonStart.setY(600F);
+        tableButtonResume = new Table();
+        tableButtonResume.setBounds(0, 0, 100, 50);
+        tableButtonResume.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonResume.getWidth() / 2));
+        tableButtonResume.setY(600F);
 
         tableButtonQuit = new Table();
         tableButtonQuit.setBounds(0, 0, 100, 50);
@@ -58,7 +58,7 @@ public class PauseScreen extends ScreenBase implements Screen {
         tbStyle.font = font;
 
         //TODO Muss noch auf ein "resume" geändert werden
-        resumeButton = new Button(skinButtonStart);
+        resumeButton = new Button(skinButtonResume);
         //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
         resumeButton.addListener(new ChangeListener() {
             @Override
@@ -66,7 +66,7 @@ public class PauseScreen extends ScreenBase implements Screen {
                 game.setScreen(main.getMainPlayingScreen());
             }
         });
-        tableButtonStart.add(resumeButton).pad(0F, 0F, 0F, 0F);
+        tableButtonResume.add(resumeButton).pad(0F, 0F, 0F, 0F);
 
         quitButton = new Button(skinButtonQuit);
         quitButton.addListener(new ChangeListener() {
@@ -95,7 +95,7 @@ public class PauseScreen extends ScreenBase implements Screen {
             stage.setDebugAll(true);
         }
 
-        stage.addActor(tableButtonStart);
+        stage.addActor(tableButtonResume);
         stage.addActor(tableButtonQuit);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
@@ -132,7 +132,7 @@ public class PauseScreen extends ScreenBase implements Screen {
 
     @Override
     public void dispose () {
-        skinButtonStart.dispose();
+        skinButtonResume.dispose();
         font.dispose();
         stage.dispose();
     }

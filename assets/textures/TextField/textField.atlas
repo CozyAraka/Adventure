@@ -1,0 +1,22 @@
+
+textField.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+8_bit_party
+  rotate: false
+  xy: 1, 463
+  size: 505, 41
+  orig: 505, 41
+  offset: 0, 0
+  index: -1
+TextFieldBG
+  rotate: false
+  xy: 1, 429
+  size: 64, 32
+  split: 30, 30, 15, 15
+  pad: 0, 0, 0, 0
+  orig: 64, 32
+  offset: 0, 0
+  index: -1

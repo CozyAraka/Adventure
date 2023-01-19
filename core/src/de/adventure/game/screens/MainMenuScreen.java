@@ -23,8 +23,8 @@ public class MainMenuScreen extends ScreenBase implements Screen {
     private final Button startButton, quitButton;
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
-    private final Skin skinButtonStart, skinButtonQuit;
-    private final Table tableButtonStart, tableButtonQuit;
+    private final Skin skinButtonStart, skinButtonExit;
+    private final Table tableButtonStart, tableButtonExit;
 
     private Audio mainMusic;
 
@@ -40,7 +40,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
         font = new BitmapFont();
 
         skinButtonStart = new Skin(Gdx.files.internal("textures/Buttons/Start/Start.json"));
-        skinButtonQuit = new Skin(Gdx.files.internal("textures/Buttons/Quit/Quit.json"));
+        skinButtonExit = new Skin(Gdx.files.internal("textures/Buttons/Exit/Exit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
         tableButtonStart = new Table();
@@ -48,10 +48,10 @@ public class MainMenuScreen extends ScreenBase implements Screen {
         tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
         tableButtonStart.setY(600F);
 
-        tableButtonQuit = new Table();
-        tableButtonQuit.setBounds(0, 0, 100, 50);
-        tableButtonQuit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonQuit.getWidth() / 2));
-        tableButtonQuit.setY(400F);
+        tableButtonExit = new Table();
+        tableButtonExit.setBounds(0, 0, 100, 50);
+        tableButtonExit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonExit.getWidth() / 2));
+        tableButtonExit.setY(400F);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
@@ -66,7 +66,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
         });
         tableButtonStart.add(startButton).pad(0F, 0F, 0F, 0F);
 
-        quitButton = new Button(skinButtonQuit);
+        quitButton = new Button(skinButtonExit);
         quitButton.addListener(new ChangeListener() {
             @Override
             public void changed (ChangeEvent event, Actor actor) {
@@ -86,7 +86,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
                 super.exit(event, x, y, pointer, fromActor);
             }
         });
-        tableButtonQuit.add(quitButton).pad(0F, 0F, 0F, 0F);
+        tableButtonExit.add(quitButton).pad(0F, 0F, 0F, 0F);
 
         //Debug code
         if(main.isDebug()) {
@@ -94,7 +94,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
         }
 
         stage.addActor(tableButtonStart);
-        stage.addActor(tableButtonQuit);
+        stage.addActor(tableButtonExit);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
@@ -124,6 +124,7 @@ public class MainMenuScreen extends ScreenBase implements Screen {
     @Override
     public void hide() {
         mainMusic.stop();
+        dispose();
         Gdx.input.setInputProcessor(null);
     }
 

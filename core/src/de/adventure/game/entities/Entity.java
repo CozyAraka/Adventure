@@ -1,6 +1,8 @@
 package de.adventure.game.entities;
 
-public class Entity {
+import com.badlogic.gdx.scenes.scene2d.Actor;
+
+public class Entity extends Actor {
     private String name, description;
 
     private int Id;

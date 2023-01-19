@@ -21,6 +21,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
+import de.adventure.game.entities.statue.Statue;
+import de.adventure.game.input.HitboxListener;
 
 import java.util.ArrayList;
 
@@ -43,6 +45,7 @@ public class MainPlayingScreen extends ScreenBase {
     private TiledMap desert_map_1;
 
     private TiledMapTileLayer collisionLayer;
+    private TiledMapTileLayer interactableLayerStatues;
     private TiledMapTileLayer desertCollision;
     private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera orthoCam;
@@ -60,6 +63,10 @@ public class MainPlayingScreen extends ScreenBase {
     private ShapeRenderer shapeRenderer;
 
     private Audio mainMusic;
+    private Statue statue;
+    private HitboxListener hitboxListener;
+
+    private Box2DDebugRenderer debugRenderer;
 
     //Kreiert den Spielscreen
     public MainPlayingScreen(final Game game, final Main main) {
@@ -82,11 +89,18 @@ public class MainPlayingScreen extends ScreenBase {
         x = 0;
         y = 0;
 
+        //Statue test
+        /*
+        statue = new Statue("\n An der Statue steht geschrieben \n" +
+                "\nVersuche doch mal E um mit Dingen im Universum zu Interagieren!", 100, 20);*/
+
+        debugRenderer = new Box2DDebugRenderer();
         //Tiled Map
         tiledMap = new TmxMapLoader().load("map/mapFinal.tmx");
 
         //Collision Layer
         collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid");
+        interactableLayerStatues = (TiledMapTileLayer) tiledMap.getLayers().get("Interactable");
 
         world = new World(new Vector2(0f, 0f), true);
         shape = new PolygonShape();
@@ -100,7 +114,8 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Orthographic Cam
         orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 80, (float) Gdx.graphics.getHeight() / 80);
+        //Cam zoom (für das spiel später Gdx.graphics.getWidth() & getHeight() / 80!!!)
+        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 50, (float) Gdx.graphics.getHeight() / 50);
 
         //Viewport
         //viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthoCam);
@@ -109,6 +124,8 @@ public class MainPlayingScreen extends ScreenBase {
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
 
         stage = new Stage();
+        hitboxListener = new HitboxListener(stage);
+
         font = new BitmapFont();
         skin = new Skin();
 
@@ -137,6 +154,7 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
+        world.setContactListener(hitboxListener);
 
     }
 
@@ -146,8 +164,8 @@ public class MainPlayingScreen extends ScreenBase {
         clearColorBuffer();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
-        int[] layerToRender1 = {0};
-        int[] layerToRender2 = {1, 2};
+        int[] layerToRender1 = {0, 1};
+        int[] layerToRender2 = {2, 3, 4};
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
@@ -161,13 +179,14 @@ public class MainPlayingScreen extends ScreenBase {
         mapRenderer.render(layerToRender2);
 
         //"Malt" alles auf den screen
+        //statue.throwText(stage);
         stage.draw();
         world.step(1/60f, 6, 2);
     }
 
+    //Der debug renderer hat nen memory leak lol
     public void debugRender(boolean isDebug) {
         if(isDebug) {
-            Box2DDebugRenderer debugRenderer = new Box2DDebugRenderer();
             debugRenderer.setDrawBodies(true);
             debugRenderer.setDrawInactiveBodies(true);
             debugRenderer.setDrawContacts(true);
@@ -207,7 +226,7 @@ public class MainPlayingScreen extends ScreenBase {
         main.getPlayer().updatePosition(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y);
     }
 
-    public ArrayList<Body> createCollisionBoxes(TiledMapTileLayer tileLayer) {
+    public ArrayList<Body> createCollisionBoxes(TiledMapTileLayer tileLayer, boolean interactable, Object object) {
         ArrayList<Body> bodies = new ArrayList<>();
         int index = 0;
 
@@ -221,18 +240,34 @@ public class MainPlayingScreen extends ScreenBase {
                 BodyDef bodyDefinition = new BodyDef();
                 bodyDefinition.type = BodyDef.BodyType.StaticBody;
                 bodyDefinition.position.set(column + 0.5F, row + 0.5F);
+                if(interactable && object instanceof Statue) {
+                    bodyDefinition.position.set(column + 0.5F, row - 0.1F);
+                }
                 bodyDefinition.angularDamping = 0F;
-                System.out.println(bodyDefinition);
 
                 shape.setAsBox(0.5F, 0.5F);
+                if(interactable && object instanceof Statue) {
+                    shape.setAsBox(0.35F, 0.1F);
+                }
 
                 FixtureDef fixtureDefinition = new FixtureDef();
                 fixtureDefinition.shape = shape;
                 fixtureDefinition.friction = 0F;
                 fixtureDefinition.restitution = 0F;
+                if(interactable) {
+                    fixtureDefinition.isSensor = true;
+                }
 
                 bodies.add(world.createBody(bodyDefinition));
                 bodies.get(index).createFixture(fixtureDefinition);
+                bodies.get(index).getFixtureList().get(0).setUserData(-1);
+
+                //Statue ID range -> 0 - 20
+                //Default id -> -1
+                if(interactable && object instanceof Statue) {
+                    bodies.get(index).getFixtureList().get(0).setUserData(index);
+                }
+                //TODO ID hinzufügen für Kisten usw
                 index++;
 
             }
@@ -246,7 +281,12 @@ public class MainPlayingScreen extends ScreenBase {
         mainMusic.play();
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
-        bodies = createCollisionBoxes(collisionLayer);
+        bodies = createCollisionBoxes(collisionLayer, false, null);
+
+        //Statues
+        Statue statue = new Statue(null, 0, 0, 0);
+        bodies.addAll(createCollisionBoxes(interactableLayerStatues, true, statue));
+        bodies.addAll(createCollisionBoxes(interactableLayerStatues, false, null));
     }
 
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
