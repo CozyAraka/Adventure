@@ -6,19 +6,23 @@
     "activeFile": "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
     "expandedProjectPaths": [
         ".",
-        "Mapset",
-        "General"
+        "General",
+        "Mapset"
     ],
     "fileStates": {
+        "D:/Desktop/Adventure/assets/map/flowers.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
         "D:/Desktop/Adventure/assets/map/mapFinal.tmx": {
             "expandedGroupLayers": [
                 2
             ],
-            "scale": 3,
-            "selectedLayer": 4,
+            "scale": 4,
+            "selectedLayer": 9,
             "viewCenter": {
-                "x": 620.1666666666666,
-                "y": 704.3333333333333
+                "x": 577.375,
+                "y": 392.75
             }
         },
         "Dungeons/decorative.tsx": {
@@ -88,6 +92,7 @@
     "project": "Maps.tiled-project",
     "recentFiles": [
         "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
+        "D:/Desktop/Adventure/assets/map/flowers.tsx",
         "General/Cliff.tsx",
         "General/Environment.tsx",
         "General/Ground misc.tsx",
@@ -97,11 +102,10 @@
         "General/Trees.tsx",
         "General/Water Flora.tsx",
         "General/CliffTest.tsx",
-        "Dungeons/dungeon.tsx",
-        "Dungeons/decorative.tsx"
+        "Dungeons/dungeon.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
-    "tileset.margin": 5,
+    "tileset.margin": 0,
     "tileset.tileSize": {
         "height": 16,
         "width": 16
