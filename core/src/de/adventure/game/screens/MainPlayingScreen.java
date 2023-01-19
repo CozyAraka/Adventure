@@ -44,9 +44,10 @@ public class MainPlayingScreen extends ScreenBase {
     private TiledMap tiledMap;
     private TiledMap desert_map_1;
 
-    private TiledMapTileLayer collisionLayer;
-    private TiledMapTileLayer interactableLayerStatues;
-    private TiledMapTileLayer desertCollision;
+    private TiledMapTileLayer solidLayer, solidUnderLayer;
+    private TiledMapTileLayer interactableLayer;
+    private TiledMapTileLayer interactableTopLayer, solidTopLayer, decorationLayer, decorationTopLayer, shadowLayer, groundLayer, groundTopLayer;
+
     private OrthogonalTiledMapRenderer mapRenderer;
     private OrthographicCamera orthoCam;
     private FitViewport viewport;
@@ -99,8 +100,18 @@ public class MainPlayingScreen extends ScreenBase {
         tiledMap = new TmxMapLoader().load("map/mapFinal.tmx");
 
         //Collision Layer
-        collisionLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid");
-        interactableLayerStatues = (TiledMapTileLayer) tiledMap.getLayers().get("Interactable");
+        solidLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid");
+        solidUnderLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid_Under");
+        interactableLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Interactable");
+
+        //Rest Layer
+        interactableTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Interactable");
+        solidTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Solid");
+        decorationLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Decoration");
+        decorationTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Decoration");
+        shadowLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Shadow");
+        groundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Ground");
+        groundTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Ground");
 
         world = new World(new Vector2(0f, 0f), true);
         shape = new PolygonShape();
@@ -164,7 +175,7 @@ public class MainPlayingScreen extends ScreenBase {
         clearColorBuffer();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
-        int[] behindPlayer = {0, 1, 2, 3, 4};
+        int[] behindPlayer = {0, 1, 2, 3, 4, 9};
         int[] overPlayer = {5, 6, 7, 8};
 
         processInput();
@@ -281,12 +292,13 @@ public class MainPlayingScreen extends ScreenBase {
         mainMusic.play();
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
-        bodies = createCollisionBoxes(collisionLayer, false, null);
+        bodies = createCollisionBoxes(solidLayer, false, null);
+        bodies.addAll(createCollisionBoxes(solidUnderLayer, false, null));
 
         //Statues
         Statue statue = new Statue(null, 0, 0, 0);
-        bodies.addAll(createCollisionBoxes(interactableLayerStatues, true, statue));
-        bodies.addAll(createCollisionBoxes(interactableLayerStatues, false, null));
+        bodies.addAll(createCollisionBoxes(interactableLayer, true, statue));
+        bodies.addAll(createCollisionBoxes(interactableLayer, false, null));
     }
 
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
