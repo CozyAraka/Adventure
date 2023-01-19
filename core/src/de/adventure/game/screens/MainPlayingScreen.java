@@ -164,19 +164,19 @@ public class MainPlayingScreen extends ScreenBase {
         clearColorBuffer();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
-        int[] layerToRender1 = {0, 1};
-        int[] layerToRender2 = {2, 3, 4};
+        int[] behindPlayer = {0, 1, 2, 3, 4};
+        int[] overPlayer = {5, 6, 7, 8};
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
         orthoCam.update();
         mapRenderer.setView(orthoCam);
 
-        mapRenderer.render(layerToRender1);
+        mapRenderer.render(behindPlayer);
 
         debugRender(main.isDebug());
 
-        mapRenderer.render(layerToRender2);
+        mapRenderer.render(overPlayer);
 
         //"Malt" alles auf den screen
         //statue.throwText(stage);

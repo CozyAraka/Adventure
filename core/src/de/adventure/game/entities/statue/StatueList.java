@@ -17,7 +17,7 @@ public class StatueList{
         statues = new ArrayList<>();
 
         statues.add(new Statue("\n Nothing found", 100, 20, -1));
-        statues.add(new Statue("\n Hi", 100, 20, 0));
+        statues.add(new Statue("\n Daddy", 100, 20, 0));
         statues.add(new Statue("\n Working", 100, 20, 1));
     }
 
