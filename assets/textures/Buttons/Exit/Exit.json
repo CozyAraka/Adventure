@@ -1,8 +1,8 @@
 {
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
-		up: 8xstart
-		over: 8xstartpressed
+		up: 8xexit
+		over: 8xexit1
 	}
 }
 }

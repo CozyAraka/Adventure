@@ -1,0 +1,22 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	_bit_party: {
+		file: 8_bit_party.fnt
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	White: {
+		r: 1
+		g: 1
+		b: 1
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: {
+		font: _bit_party
+		fontColor: White
+		background: TextFieldBG
+	}
+}
+}

@@ -208,6 +208,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
     @Override
     public void hide() {
         Gdx.graphics.setTitle("Switching..");
+        dispose();
         Gdx.input.setInputProcessor(null);
     }
 
