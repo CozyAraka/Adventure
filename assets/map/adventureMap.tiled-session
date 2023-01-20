@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "uwu.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "First Asset pack.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "uwu.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 524.6666666666666,
+                "y": 539.3333333333333
+            }
+        }
+    },
+    "last.exportedFilePath": "D:/Desktop/Adventure/assets/map",
+    "last.imagePath": "D:/Desktop/Adventure/assets/map",
+    "map.height": 45,
+    "map.lastUsedExportFilter": "Alle Dateien (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 12,
+    "map.tileWidth": 12,
+    "map.width": 80,
+    "openFiles": [
+        "uwu.tmx",
+        "First Asset pack.tsx"
+    ],
+    "project": "adventureMap.tiled-project",
+    "recentFiles": [
+        "First Asset pack.tsx",
+        "uwu.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 12,
+        "width": 12
+    }
+}
