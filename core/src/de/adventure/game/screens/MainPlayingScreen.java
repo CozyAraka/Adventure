@@ -3,8 +3,10 @@ package de.adventure.game.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -15,7 +17,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.Main;
@@ -33,7 +34,7 @@ public class MainPlayingScreen extends ScreenBase {
     private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
     private final Skin skin;
-    private final Table /*tableMap,*/ tableInventory;
+    /*private final Table tableMap, tableInventory;*/
     //private final SpriteBatch batch;
 
     private int x, y, pixelTileSize;
@@ -69,11 +70,30 @@ public class MainPlayingScreen extends ScreenBase {
 
     private Box2DDebugRenderer debugRenderer;
 
+    //Player Animation
+    private Animation<TextureRegion> walkAnimationUp, walkAnimationDown, walkAnimationLeft, walkAnimationRight;
+    private Animation<TextureRegion> idleAnimationUp, idleAnimationDown, idleAnimationLeft, idleAnimationRight;
+    private Texture walkSheetRight;
+    private SpriteBatch spriteBatch;
+    private Sprite playerSprite;
+    private TextureRegion currentFrame;
+
     //Kreiert den Spielscreen
     public MainPlayingScreen(final Game game, final Main main) {
         super(game, main, "MainPlayingScreen");
         this.game = game;
         this.main = main;
+
+        //Player Animation
+        walkAnimationUp = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkUp.png")));
+        idleAnimationUp = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleUp.png")));
+        walkAnimationDown = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkDown.png")));
+        idleAnimationDown = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleDown.png")));
+        walkAnimationLeft = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkLeft.png")));
+        idleAnimationLeft = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleLeft.png")));
+        walkAnimationRight = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkRight.png")));
+        idleAnimationRight = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleRight.png")));
+        spriteBatch = new SpriteBatch();
 
         //Music
         mainMusic = new Audio("audio/mainMenuMusic.wav", 0.05F, true);
@@ -126,7 +146,7 @@ public class MainPlayingScreen extends ScreenBase {
         //Orthographic Cam
         orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         //Cam zoom (für das spiel später Gdx.graphics.getWidth() & getHeight() / 80!!!)
-        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 50, (float) Gdx.graphics.getHeight() / 50);
+        orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 80, (float) Gdx.graphics.getHeight() / 80);
 
         //Viewport
         //viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthoCam);
@@ -147,10 +167,12 @@ public class MainPlayingScreen extends ScreenBase {
         tableMap.setY(Gdx.graphics.getHeight() - 275);
          */
 
+        /*
         tableInventory = new Table();
         tableInventory.setBounds(0, 0, 50, 400);
         tableInventory.setX(25F);
         tableInventory.setY(Gdx.graphics.getHeight() - 800);
+         */
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
@@ -161,7 +183,7 @@ public class MainPlayingScreen extends ScreenBase {
         }
 
         //stage.addActor(tableMap);
-        stage.addActor(tableInventory);
+        //stage.addActor(tableInventory);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         Gdx.input.setInputProcessor(stage);
@@ -169,23 +191,82 @@ public class MainPlayingScreen extends ScreenBase {
 
     }
 
+    public TextureRegion[] createTextureRegion(int columns, int rows, Texture texture) {
+        TextureRegion[][] textureRegion = TextureRegion.split(texture, texture.getWidth() / columns, texture.getHeight() / rows);
+        TextureRegion[] walkFrames = new TextureRegion[columns * rows];
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                walkFrames[index++] = textureRegion[i][j];
+            }
+        }
+        return walkFrames;
+    }
+
+    private float elapsed = 0F;
+    public void waterAnimation() {
+        elapsed += Gdx.graphics.getDeltaTime();
+
+        int[] waterAnim2 = {3};
+        int[] waterAnim3 = {4};
+        int[] waterAnim4 = {5};
+        int[] waterAnim5 = {6};
+        int[] waterAnim6 = {7};
+        int[] waterAnim7 = {8};
+        int[] waterAnim8 = {9};
+
+        if(elapsed > 0.8F) {
+            elapsed = 0;
+        }else if(elapsed > 0.7F) {
+            mapRenderer.render(waterAnim8);
+        }else if(elapsed > 0.6F) {
+            mapRenderer.render(waterAnim7);
+        }else if(elapsed > 0.5F) {
+            mapRenderer.render(waterAnim6);
+        }else if(elapsed > 0.4F) {
+            mapRenderer.render(waterAnim5);
+        }else if(elapsed > 0.3F) {
+            mapRenderer.render(waterAnim4);
+        }else if(elapsed > 0.2F) {
+            mapRenderer.render(waterAnim3);
+        }else if(elapsed > 0.1F) {
+            mapRenderer.render(waterAnim2);
+        }
+    }
     //Generelle render Methode die nach dem switchen zu diesem Screen benutzt wird
+    private float accumulatedTime = 0F;
     @Override
     public void render(float delta) {
         clearColorBuffer();
+        accumulatedTime += Gdx.graphics.getDeltaTime();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
-        int[] behindPlayer = {0, 1, 2, 3, 4, 9};
-        int[] overPlayer = {5, 6, 7, 8};
+        //15 = Top_Solid
+        //14 = Solid
+        int[] groundTopGround = {0, 1};
+        int[] behindPlayer = {10, 11, 12, 13, 14, 16};
+        int[] overPlayer = {15, 17};
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
         orthoCam.update();
+
         mapRenderer.setView(orthoCam);
+        mapRenderer.render(groundTopGround);
+        waterAnimation();
+
+        playerSprite = new Sprite(currentFrame);
+        playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 125F);
+        playerSprite.setSize(250F, 250F);
+
+
 
         mapRenderer.render(behindPlayer);
 
-        debugRender(main.isDebug());
+        //debugRender(main.isDebug());
+        spriteBatch.begin();
+        playerSprite.draw(spriteBatch);
+        spriteBatch.end();
 
         mapRenderer.render(overPlayer);
 
@@ -205,6 +286,22 @@ public class MainPlayingScreen extends ScreenBase {
         }
     }
 
+    public enum Orientation {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
+    private Orientation orientation = Orientation.RIGHT;
+
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
+    }
+
+    public Orientation getOrientation() {
+        return orientation;
+    }
+
     public void processInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             game.setScreen(main.getMapScreen());
@@ -216,24 +313,67 @@ public class MainPlayingScreen extends ScreenBase {
         int xForce = 0;
         int yForce = 0;
 
+        switch(orientation) {
+            case UP:
+                currentFrame = idleAnimationUp.getKeyFrame(accumulatedTime / 8, true);
+                break;
+
+            case DOWN:
+                currentFrame = idleAnimationDown.getKeyFrame(accumulatedTime / 8, true);
+                break;
+
+            case LEFT:
+                currentFrame = idleAnimationLeft.getKeyFrame(accumulatedTime / 8, true);
+                break;
+
+            case RIGHT:
+                currentFrame = idleAnimationRight.getKeyFrame(accumulatedTime / 8, true);
+                break;
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            yForce += 3;
+            yForce = 3;
+            currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 4, true);
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                yForce = 4;
+                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 3, true);
+            }
+
+            setOrientation(Orientation.UP);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            xForce -= 3;
+            xForce = -3;
+            currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 4, true);
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                xForce = -4;
+                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 3, true);
+            }
+            setOrientation(Orientation.LEFT);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            yForce -= 3;
+            yForce = -3;
+            currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 4, true);
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                yForce = -4;
+                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 3, true);
+            }
+            setOrientation(Orientation.DOWN);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            xForce += 3;
+            xForce = 3;
+            currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 4, true);
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                xForce = 4;
+                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 3, true);
+            }
+            setOrientation(Orientation.RIGHT);
         }
 
-        bodyPlayer.setLinearVelocity(yForce * 2, bodyPlayer.getLinearVelocity().y);
-        bodyPlayer.setLinearVelocity(xForce * 2, bodyPlayer.getLinearVelocity().x);
+        bodyPlayer.setLinearVelocity(yForce * 1, bodyPlayer.getLinearVelocity().y);
+        bodyPlayer.setLinearVelocity(xForce * 1, bodyPlayer.getLinearVelocity().x);
         main.getPlayer().updatePosition(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y);
     }
 
@@ -254,9 +394,8 @@ public class MainPlayingScreen extends ScreenBase {
                 if(interactable && object instanceof Statue) {
                     bodyDefinition.position.set(column + 0.5F, row - 0.1F);
                 }
-                bodyDefinition.angularDamping = 0F;
 
-                shape.setAsBox(0.5F, 0.5F);
+                shape.setAsBox(0.48F, 0.48F);
                 if(interactable && object instanceof Statue) {
                     shape.setAsBox(0.35F, 0.1F);
                 }
@@ -264,7 +403,6 @@ public class MainPlayingScreen extends ScreenBase {
                 FixtureDef fixtureDefinition = new FixtureDef();
                 fixtureDefinition.shape = shape;
                 fixtureDefinition.friction = 0F;
-                fixtureDefinition.restitution = 0F;
                 if(interactable) {
                     fixtureDefinition.isSensor = true;
                 }
@@ -290,6 +428,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void show() {
         mainMusic.play();
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
+        Gdx.input.setCursorCatched(true);
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
         bodies = createCollisionBoxes(solidLayer, false, null);
@@ -305,6 +445,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void hide() {
         //mainMusic.stop();
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+        Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(null);
     }
 
