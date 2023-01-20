@@ -19,6 +19,7 @@ public class StatueList{
         statues.add(new Statue("\n Nothing found", 100, 20, -1));
         statues.add(new Statue("\n Daddy", 100, 20, 0));
         statues.add(new Statue("\n Working", 100, 20, 1));
+        statues.add(new Statue("\n Working", 100, 20, 2));
     }
 
     public Statue getStatueByID(int id) {
@@ -39,6 +40,11 @@ public class StatueList{
 
             case 1:
                 statue = getStatueByID(1);
+                statue.throwText(stage);
+                break;
+
+            case 2:
+                statue = getStatueByID(2);
                 statue.throwText(stage);
                 break;
 

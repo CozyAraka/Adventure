@@ -5,9 +5,9 @@
     },
     "activeFile": "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
     "expandedProjectPaths": [
-        "General",
+        ".",
         "Mapset",
-        "."
+        "General"
     ],
     "fileStates": {
         "D:/Desktop/Adventure/assets/map/flowers.tsx": {
@@ -16,15 +16,15 @@
         },
         "D:/Desktop/Adventure/assets/map/mapFinal.tmx": {
             "expandedGroupLayers": [
-                2,
+                20,
                 21,
-                20
+                2
             ],
-            "scale": 3,
-            "selectedLayer": 0,
+            "scale": 8,
+            "selectedLayer": 13,
             "viewCenter": {
-                "x": 741.5,
-                "y": 833
+                "x": 766.3125,
+                "y": 834.25
             }
         },
         "Dungeons/decorative.tsx": {
