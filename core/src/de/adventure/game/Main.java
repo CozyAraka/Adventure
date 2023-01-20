@@ -2,12 +2,22 @@ package de.adventure.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Logger;
 import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.entities.player.Player;
+import de.adventure.game.inventory.InventoryScreen;
 import de.adventure.game.items.ItemCollector;
 import de.adventure.game.screens.*;
+
+import java.util.Random;
 
 public class Main extends Game {
 	//Debug
@@ -16,7 +26,7 @@ public class Main extends Game {
 	//LibGDX
 	private BitmapFont font;
 	private SpriteBatch batch;
-	private Game game;
+	private static Game game;
 
 	//Items
 	private ItemCollector itemCollector;
@@ -25,14 +35,23 @@ public class Main extends Game {
 	private EntityCollector entityCollector;
 
 	//Screens
-	private MainMenuScreen mainMenuScreen;
-	private CharacterCreationScreen characterCreationScreen;
-	private MainPlayingScreen mainPlayingScreen;
-	private MapScreen mapScreen;
-	private PauseScreen pauseScreen;
+	private static MainMenuScreen mainMenuScreen;
+	private static CharacterCreationScreen characterCreationScreen;
+	private static MainPlayingScreen mainPlayingScreen;
+	private static MapScreen mapScreen;
+	private static PauseScreen pauseScreen;
+	private static InventoryScreen inventoryScreen;
 
 	//Player
 	private Player player;
+
+	//Stuff
+	public static final Logger logger = new Logger("LibGDX Utils");
+	public static final AssetManager assets = new AssetManager();
+	public static final Random random = new Random();
+	public static SpriteBatch spriteBatch;
+	public static ModelBatch modelBatch;
+	private static Stage stage;
 
 	public enum GameState {
 		RUNNING,
@@ -48,7 +67,12 @@ public class Main extends Game {
 	@Override
 	public void create() {
 		setGameState(GameState.LOADING);
+
+		Main.assets.load("skins/uiskin.json", Skin.class);
+		Main.assets.load("icons/icons.atlas", TextureAtlas.class);
+		Main.assets.finishLoading();
 		Gdx.graphics.setVSync(true);
+		stage = new Stage();
 
 		//Player
 		player = new Player("", 0F, 0F, 0);
@@ -76,6 +100,7 @@ public class Main extends Game {
 		mainPlayingScreen = new MainPlayingScreen(this, this);
 		mapScreen = new MapScreen(this, this);
 		pauseScreen = new PauseScreen(this, this);
+		inventoryScreen = new InventoryScreen();
 
 		setGameState(GameState.RUNNING);
 		//ScreenUtils.clear(0, 0, 0, 1);
@@ -95,6 +120,10 @@ public class Main extends Game {
 		System.exit(0);
 	}
 
+	public static Stage getStage() {
+		return stage;
+	}
+
 	public MainMenuScreen getMainMenu() {
 		return mainMenuScreen;
 	}
@@ -103,7 +132,7 @@ public class Main extends Game {
 		return characterCreationScreen;
 	}
 
-	public MainPlayingScreen getMainPlayingScreen() {
+	public static MainPlayingScreen getMainPlayingScreen() {
 		return mainPlayingScreen;
 	}
 
@@ -113,6 +142,14 @@ public class Main extends Game {
 
 	public PauseScreen getPauseScreen() {
 		return pauseScreen;
+	}
+
+	public static InventoryScreen getInventoryScreen() {
+		return inventoryScreen;
+	}
+
+	public static void setGameScreen(Screen screen) {
+		game.setScreen(screen);
 	}
 
 	public GameState getGameState() {

@@ -3,7 +3,6 @@ package de.adventure.game.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -18,12 +17,15 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
 import de.adventure.game.entities.statue.Statue;
 import de.adventure.game.input.HitboxListener;
+import de.adventure.game.inventory.Inventory;
+import de.adventure.game.inventory.InventoryActor;
 
 import java.util.ArrayList;
 
@@ -78,11 +80,21 @@ public class MainPlayingScreen extends ScreenBase {
     private Sprite playerSprite;
     private TextureRegion currentFrame;
 
+    //Inventory
+    private InventoryActor inventoryActor;
+    private Skin inventorySkin;
+
     //Kreiert den Spielscreen
     public MainPlayingScreen(final Game game, final Main main) {
         super(game, main, "MainPlayingScreen");
         this.game = game;
         this.main = main;
+
+        //Inventory
+        inventorySkin = Main.assets.get("skins/uiskin.json", Skin.class);
+        DragAndDrop dragAndDrop = new DragAndDrop();
+        inventoryActor = new InventoryActor(new Inventory(), dragAndDrop, inventorySkin);
+        stage = Main.getStage();
 
         //Player Animation
         walkAnimationUp = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkUp.png")));
@@ -96,7 +108,8 @@ public class MainPlayingScreen extends ScreenBase {
         spriteBatch = new SpriteBatch();
 
         //Music
-        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.05F, true);
+        mainMusic = new Audio("audio/forestBirds.wav", 0.15F, true, main, 0, 0);
+        mainMusic.setAsLoop();
 
         //Map width & height (tiles)
         mapWidth = 80F;
@@ -153,8 +166,6 @@ public class MainPlayingScreen extends ScreenBase {
 
         //Map Renderer
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
-
-        stage = new Stage();
         hitboxListener = new HitboxListener(stage);
 
         font = new BitmapFont();
@@ -186,8 +197,9 @@ public class MainPlayingScreen extends ScreenBase {
         //stage.addActor(tableInventory);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
-        Gdx.input.setInputProcessor(stage);
+        stage.addActor(inventoryActor);
         world.setContactListener(hitboxListener);
+        Gdx.input.setInputProcessor(stage);
 
     }
 
@@ -238,6 +250,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void render(float delta) {
         clearColorBuffer();
+        mainMusic.playOnCords(47.5F, 9.5F);
+
         accumulatedTime += Gdx.graphics.getDeltaTime();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
@@ -249,6 +263,8 @@ public class MainPlayingScreen extends ScreenBase {
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
+        //orthoCam.position.set(new Vector3(Math.min((mapWidth / 2) - orthoCam.viewportWidth / 2 , orthoCam.position.x), Math.min((mapHeight / 2) - orthoCam.viewportHeight / 2 , orthoCam.position.y), 0));
+        //orthoCam.position.set(new Vector3(Math.max(-(mapWidth / 2) + orthoCam.viewportWidth / 2 , orthoCam.position.x), Math.min(-(mapHeight / 2) + orthoCam.viewportHeight / 2 , orthoCam.position.y), 0));
         orthoCam.update();
 
         mapRenderer.setView(orthoCam);
@@ -263,7 +279,7 @@ public class MainPlayingScreen extends ScreenBase {
 
         mapRenderer.render(behindPlayer);
 
-        //debugRender(main.isDebug());
+        debugRender(main.isDebug());
         spriteBatch.begin();
         playerSprite.draw(spriteBatch);
         spriteBatch.end();
@@ -276,7 +292,6 @@ public class MainPlayingScreen extends ScreenBase {
         world.step(1/60f, 6, 2);
     }
 
-    //Der debug renderer hat nen memory leak lol
     public void debugRender(boolean isDebug) {
         if(isDebug) {
             debugRenderer.setDrawBodies(true);
@@ -302,12 +317,23 @@ public class MainPlayingScreen extends ScreenBase {
         return orientation;
     }
 
+    public void renderInventory() {
+
+    }
+
     public void processInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             game.setScreen(main.getMapScreen());
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.setScreen(main.getPauseScreen());
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+            if(inventoryActor.isVisible()) {
+                inventoryActor.setVisible(false);
+            }else {
+                inventoryActor.setVisible(true);
+            }
         }
 
         int xForce = 0;
@@ -331,17 +357,6 @@ public class MainPlayingScreen extends ScreenBase {
                 break;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            yForce = 3;
-            currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 4, true);
-            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                yForce = 4;
-                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 3, true);
-            }
-
-            setOrientation(Orientation.UP);
-        }
-
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             xForce = -3;
             currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 4, true);
@@ -350,6 +365,16 @@ public class MainPlayingScreen extends ScreenBase {
                 currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 3, true);
             }
             setOrientation(Orientation.LEFT);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            xForce = 3;
+            currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 4, true);
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                xForce = 4;
+                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 3, true);
+            }
+            setOrientation(Orientation.RIGHT);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
@@ -362,14 +387,15 @@ public class MainPlayingScreen extends ScreenBase {
             setOrientation(Orientation.DOWN);
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            xForce = 3;
-            currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 4, true);
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            yForce = 3;
+            currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 4, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                xForce = 4;
-                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 3, true);
+                yForce = 4;
+                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 3, true);
             }
-            setOrientation(Orientation.RIGHT);
+
+            setOrientation(Orientation.UP);
         }
 
         bodyPlayer.setLinearVelocity(yForce * 1, bodyPlayer.getLinearVelocity().y);
@@ -428,8 +454,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void show() {
         mainMusic.play();
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
-        Gdx.input.setCursorCatched(true);
+        //Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
+        //Gdx.input.setCursorCatched(true);
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
         bodies = createCollisionBoxes(solidLayer, false, null);
@@ -445,8 +471,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void hide() {
         //mainMusic.stop();
-        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-        Gdx.input.setCursorCatched(false);
+        //Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+        //Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(null);
     }
 

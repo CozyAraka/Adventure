@@ -11,6 +11,7 @@ public class Launch {
 		config.setTitle("Adventure");
 		config.setWindowIcon("icon.png");
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
-		new Lwjgl3Application(new Main(true), config);
+		//config.setWindowedMode(960, 700);
+		new Lwjgl3Application(new Main(false), config);
 	}
 }
