@@ -35,7 +35,7 @@ public class PauseScreen extends ScreenBase implements Screen {
         this.game = game;
         this.main = main;
 
-        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true, main, 0, 0);
+        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true, main);
 
         stage = new Stage();
         font = new BitmapFont();
@@ -57,7 +57,6 @@ public class PauseScreen extends ScreenBase implements Screen {
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
 
-        //TODO Muss noch auf ein "resume" geändert werden
         resumeButton = new Button(skinButtonResume);
         //Fügt einen Listener zum Button hinzu (damit dieser benutzt werden kann)
         resumeButton.addListener(new ChangeListener() {

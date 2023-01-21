@@ -59,7 +59,6 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         font = new BitmapFont();
         font.setColor(Color.WHITE);
 
-        //TODO Eigene Skins für Buttons und Textfelder
         skinButtonPlay = new Skin(Gdx.files.internal("textures/Buttons/Play/Play.json"));
 
         tableButtonStart = new Table();
