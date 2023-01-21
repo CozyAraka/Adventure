@@ -47,7 +47,7 @@ public class MainPlayingScreen extends ScreenBase {
     private TiledMap tiledMap;
     private TiledMap desert_map_1;
 
-    private TiledMapTileLayer solidLayer, solidUnderLayer;
+    private TiledMapTileLayer solidLayer, solidUnderLayer, solidOverPlayerLayer;
     private TiledMapTileLayer interactableLayer;
     private TiledMapTileLayer interactableTopLayer, solidTopLayer, decorationLayer, decorationTopLayer, shadowLayer, groundLayer, groundTopLayer;
 
@@ -108,7 +108,7 @@ public class MainPlayingScreen extends ScreenBase {
         spriteBatch = new SpriteBatch();
 
         //Music
-        mainMusic = new Audio("audio/forestBirds.wav", 0.15F, true, main, 0, 0);
+        mainMusic = new Audio("audio/forestBirds.wav", 0.15F, true, main);
         mainMusic.setAsLoop();
 
         //Map width & height (tiles)
@@ -135,6 +135,7 @@ public class MainPlayingScreen extends ScreenBase {
         //Collision Layer
         solidLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid");
         solidUnderLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid_Under");
+        solidOverPlayerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid_over_Player");
         interactableLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Interactable");
 
         //Rest Layer
@@ -151,7 +152,7 @@ public class MainPlayingScreen extends ScreenBase {
         circleShape = new CircleShape();
         player = main.getPlayer();
 
-        bodyPlayer = player.createBody(world, circleShape, 0.5F, 30, 5);
+        bodyPlayer = player.createBody(world, circleShape, 0.2F, 56.5F, 20.5F);
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
@@ -250,16 +251,18 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void render(float delta) {
         clearColorBuffer();
-        mainMusic.playOnCords(47.5F, 9.5F);
+        mainMusic.playOnCords(56.5F, 31.5F);
 
         accumulatedTime += Gdx.graphics.getDeltaTime();
 
         //Clipping des Spielers (Man kann hinter blöcken stehen, je nachdem was als Erstes gerendert wird)
         //15 = Top_Solid
         //14 = Solid
+
+        //TODO ein layer solid über un ein unter dem Spieler!
         int[] groundTopGround = {0, 1};
-        int[] behindPlayer = {10, 11, 12, 13, 14, 16};
-        int[] overPlayer = {15, 17};
+        int[] behindPlayer = {10, 11, 12, 13, 14, 16, 17};
+        int[] overPlayer = {15, 16, 18};
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
@@ -272,19 +275,18 @@ public class MainPlayingScreen extends ScreenBase {
         waterAnimation();
 
         playerSprite = new Sprite(currentFrame);
-        playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 125F);
+        playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 100F);
         playerSprite.setSize(250F, 250F);
-
-
 
         mapRenderer.render(behindPlayer);
 
-        debugRender(main.isDebug());
         spriteBatch.begin();
         playerSprite.draw(spriteBatch);
         spriteBatch.end();
 
         mapRenderer.render(overPlayer);
+
+        debugRender(main.isDebug());
 
         //"Malt" alles auf den screen
         //statue.throwText(stage);
@@ -363,6 +365,9 @@ public class MainPlayingScreen extends ScreenBase {
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 xForce = -4;
                 currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 3, true);
+            }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                xForce = -2;
+                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 5, true);
             }
             setOrientation(Orientation.LEFT);
         }
@@ -373,6 +378,9 @@ public class MainPlayingScreen extends ScreenBase {
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 xForce = 4;
                 currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 3, true);
+            }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                xForce = 2;
+                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 5, true);
             }
             setOrientation(Orientation.RIGHT);
         }
@@ -383,6 +391,9 @@ public class MainPlayingScreen extends ScreenBase {
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 yForce = -4;
                 currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 3, true);
+            }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                yForce = -2;
+                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 5, true);
             }
             setOrientation(Orientation.DOWN);
         }
@@ -393,6 +404,9 @@ public class MainPlayingScreen extends ScreenBase {
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 yForce = 4;
                 currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 3, true);
+            }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
+                yForce = 2;
+                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 5, true);
             }
 
             setOrientation(Orientation.UP);
@@ -460,6 +474,7 @@ public class MainPlayingScreen extends ScreenBase {
         Gdx.input.setInputProcessor(stage);
         bodies = createCollisionBoxes(solidLayer, false, null);
         bodies.addAll(createCollisionBoxes(solidUnderLayer, false, null));
+        bodies.addAll(createCollisionBoxes(solidOverPlayerLayer, false, null));
 
         //Statues
         Statue statue = new Statue(null, 0, 0, 0);

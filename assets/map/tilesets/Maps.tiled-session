@@ -5,8 +5,8 @@
     },
     "activeFile": "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
     "expandedProjectPaths": [
-        ".",
         "Mapset",
+        ".",
         "General"
     ],
     "fileStates": {
@@ -16,15 +16,15 @@
         },
         "D:/Desktop/Adventure/assets/map/mapFinal.tmx": {
             "expandedGroupLayers": [
-                20,
+                2,
                 21,
-                2
+                20
             ],
-            "scale": 8,
-            "selectedLayer": 13,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 766.3125,
-                "y": 834.25
+                "x": 755.6666666666666,
+                "y": 733.3333333333333
             }
         },
         "Dungeons/decorative.tsx": {
@@ -101,17 +101,14 @@
     "map.tileWidth": 16,
     "map.width": 80,
     "openFiles": [
-        "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
-        "General/Animated/Tileset/WaterAnim.tsx",
-        "General/Animated/Ambience/Water Ambience.tsx",
-        "General/Animated/Ambience/Animated Grass.tsx"
+        "D:/Desktop/Adventure/assets/map/mapFinal.tmx"
     ],
     "project": "Maps.tiled-project",
     "recentFiles": [
+        "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
         "General/Animated/Ambience/Animated Grass.tsx",
         "General/Animated/Ambience/Water Ambience.tsx",
         "General/Animated/Tileset/WaterAnim.tsx",
-        "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
         "D:/Desktop/Adventure/assets/map/flowers.tsx",
         "General/Cliff.tsx",
         "General/Environment.tsx",

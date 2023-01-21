@@ -9,18 +9,16 @@ public class Audio {
     private Sound sound;
     private Music music;
 
-    private float volume, x, y;
+    private float volume;
     private long soundID;
     private boolean isMusic;
 
     public Main main;
 
-    public Audio(String path, float volume, boolean isMusic, Main main, float x, float y) {
+    public Audio(String path, float volume, boolean isMusic, Main main) {
         this.isMusic = isMusic;
         this.main = main;
         this.volume = volume;
-        this.x = x;
-        this.y = y;
 
         if(isMusic) {
             music = Gdx.audio.newMusic(Gdx.files.internal(path));
@@ -45,6 +43,14 @@ public class Audio {
         }
     }
 
+    public void setVolume(float volume) {
+        if(isMusic) {
+            music.setVolume(volume);
+        }else {
+            sound.setVolume(soundID, volume);
+        }
+    }
+
     private float volume1 = 0.1F;
     public void playOnCords(float x, float y) {
         float val1 = (float) -Math.sqrt((double) (x - main.getPlayer().getXCord()) * (x - main.getPlayer().getXCord()) + (y - main.getPlayer().getYCord()) * (y - main.getPlayer().getYCord())) / 300;
@@ -55,7 +61,7 @@ public class Audio {
         //System.out.println(val1);
         //System.out.println(volume1);
         music.setVolume(volume1);
-        System.out.println(val1);
+        //System.out.println(val1);
         System.out.println(main.getPlayer().getXCord() + " XCord : YCord " + main.getPlayer().getYCord());
     }
 

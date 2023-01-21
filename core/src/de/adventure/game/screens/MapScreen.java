@@ -29,7 +29,7 @@ public class MapScreen extends ScreenBase implements Screen {
         this.game = game;
         this.main = main;
 
-        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true, main, 0, 0);
+        mainMusic = new Audio("audio/mainMenuMusic.wav", 0.15F, true, main);
 
         stage = new Stage();
         font = new BitmapFont();
