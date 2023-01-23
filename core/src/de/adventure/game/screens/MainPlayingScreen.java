@@ -262,7 +262,7 @@ public class MainPlayingScreen extends ScreenBase {
         //TODO ein layer solid über un ein unter dem Spieler!
         int[] groundTopGround = {0, 1};
         int[] behindPlayer = {10, 11, 12, 13, 14, 16, 17};
-        int[] overPlayer = {15, 16, 18};
+        int[] overPlayer = {15, 16, 18, 19};
 
         processInput();
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
