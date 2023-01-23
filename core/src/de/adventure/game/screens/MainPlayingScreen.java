@@ -3,6 +3,7 @@ package de.adventure.game.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import com.badlogic.gdx.utils.Null;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
@@ -23,6 +25,7 @@ import de.adventure.game.entities.statue.Statue;
 import de.adventure.game.input.HitboxListener;
 import de.adventure.game.inventory.Inventory;
 import de.adventure.game.inventory.InventoryActor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -154,7 +157,7 @@ public class MainPlayingScreen extends ScreenBase {
 
     }
 
-    public void updateCameraWithPlayer() {
+    public void updateCameraCorrespondingToMap() {
         if(orthoCam.viewportWidth > mapWidth) {
             orthoCam.position.x = mapWidth;
 
@@ -176,6 +179,34 @@ public class MainPlayingScreen extends ScreenBase {
             orthoCam.position.y = mapHeight - orthoCam.viewportHeight / 2;
 
         }
+    }
+
+    public void velocityLogic(float xForce, float yForce) {
+        if(bodyPlayer.getPosition().x > mapWidth && orientation == Orientation.RIGHT && Gdx.input.isKeyPressed(Input.Keys.D)) {
+            bodyPlayer.setLinearVelocity(yForce / 3F, bodyPlayer.getLinearVelocity().y);
+            bodyPlayer.setLinearVelocity(0, bodyPlayer.getLinearVelocity().x);
+            return;
+
+        }else if(bodyPlayer.getPosition().x < 0 && orientation == Orientation.LEFT && Gdx.input.isKeyPressed(Input.Keys.A)) {
+            bodyPlayer.setLinearVelocity(yForce / 3F, bodyPlayer.getLinearVelocity().y);
+            bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().x);
+            return;
+
+        }
+
+        if(bodyPlayer.getPosition().y > mapHeight && orientation == Orientation.UP && Gdx.input.isKeyPressed(Input.Keys.W)) {
+            bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().y);
+            bodyPlayer.setLinearVelocity(xForce / 3F, bodyPlayer.getLinearVelocity().x);
+            return;
+
+        }else if(bodyPlayer.getPosition().y < 0 && orientation == Orientation.DOWN && Gdx.input.isKeyPressed(Input.Keys.S)) {
+            bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().y);
+            bodyPlayer.setLinearVelocity(xForce / 3F, bodyPlayer.getLinearVelocity().x);
+            return;
+
+        }
+        bodyPlayer.setLinearVelocity(yForce / 3F, bodyPlayer.getLinearVelocity().y);
+        bodyPlayer.setLinearVelocity(xForce / 3F, bodyPlayer.getLinearVelocity().x);
     }
 
     public void waterAnimation() {
@@ -229,15 +260,11 @@ public class MainPlayingScreen extends ScreenBase {
         playerSprite = new Sprite(currentFrame);
         playerSprite.setOrigin(0, 0);
         playerSprite.setSize(3F, 3F);
-        //playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 100F);
-        //playerSprite.setPosition((float) Gdx.graphics.getWidth() * 0.8F, (float) Gdx.graphics.getHeight() * 0.8F);
-        playerSprite.setPosition(bodyPlayer.getPosition().x - 1.5F, bodyPlayer.getPosition().y - 1.25F);
+        playerSprite.setPosition(bodyPlayer.getPosition().x - 1.5F, bodyPlayer.getPosition().y - 1.20F);
+        orthoCam.position.set(new Vector3(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y, 0));
 
+        updateCameraCorrespondingToMap();
 
-        orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
-
-        //Not working
-        updateCameraWithPlayer();
         orthoCam.update();
 
         mapRenderer.setView(orthoCam);
@@ -246,7 +273,6 @@ public class MainPlayingScreen extends ScreenBase {
 
         mapRenderer.render(behindPlayer);
 
-        //spriteBatch.setTransformMatrix(orthoCam.combined);
         spriteBatch.setProjectionMatrix(orthoCam.combined);
         spriteBatch.begin();
         playerSprite.draw(spriteBatch);
@@ -256,10 +282,43 @@ public class MainPlayingScreen extends ScreenBase {
 
         debugRender(main.isDebug());
 
-        //"Malt" alles auf den screen
-        //statue.throwText(stage);
+        interactLogic();
+
         stage.draw();
         world.step(1/60f, 6, 2);
+    }
+
+    private static boolean pressedE = false;
+    public static void setPressedE() {
+        pressedE = !pressedE;
+    }
+    public static boolean getPressedE() {
+        return pressedE;
+    }
+
+    //TODO Kisten interact logic usw.
+    public void interactLogic() {
+        if(HitboxListener.isTouching()) {
+            if(orientation == Orientation.UP) {
+                if(Gdx.input.isKeyJustPressed(Input.Keys.E) && pressedE) {
+                    HitboxListener.getStatue().endText(stage);
+                    pressedE = !pressedE;
+
+                }else if(Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    HitboxListener.getStatue().throwText(stage);
+                    pressedE = !pressedE;
+
+                }
+            }else if(pressedE) {
+                HitboxListener.getStatue().endText(stage);
+                pressedE = !pressedE;
+
+            }
+        }
+        if(HitboxListener.getTouched() == 1) {
+            HitboxListener.getStatue().endText(stage);
+            HitboxListener.setTouched(0);
+        }
     }
 
     public void debugRender(boolean isDebug) {
@@ -277,13 +336,13 @@ public class MainPlayingScreen extends ScreenBase {
         LEFT,
         RIGHT
     }
-    private Orientation orientation = Orientation.RIGHT;
+    private static Orientation orientation = Orientation.RIGHT;
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
     }
 
-    public Orientation getOrientation() {
+    public static Orientation getOrientation() {
         return orientation;
     }
 
@@ -297,8 +356,13 @@ public class MainPlayingScreen extends ScreenBase {
         if(Gdx.input.isKeyJustPressed(Input.Keys.I)) {
             if(inventoryActor.isVisible()) {
                 inventoryActor.setVisible(false);
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
+                Gdx.input.setCursorCatched(true);
+
             }else {
                 inventoryActor.setVisible(true);
+                Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+                Gdx.input.setCursorCatched(false);
             }
         }
 
@@ -323,8 +387,9 @@ public class MainPlayingScreen extends ScreenBase {
                 break;
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT)) {
             xForce = -2;
+            yForce = 0;
             currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 xForce = -3;
@@ -335,8 +400,9 @@ public class MainPlayingScreen extends ScreenBase {
             }
             setOrientation(Orientation.LEFT);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT)) {
             xForce = 2;
+            yForce = 0;
             currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 xForce = 3;
@@ -347,8 +413,9 @@ public class MainPlayingScreen extends ScreenBase {
             }
             setOrientation(Orientation.RIGHT);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)) {
             yForce = -2;
+            xForce = 0;
             currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 yForce = -3;
@@ -359,8 +426,9 @@ public class MainPlayingScreen extends ScreenBase {
             }
             setOrientation(Orientation.DOWN);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)) {
             yForce = 2;
+            xForce = 0;
             currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 yForce = 3;
@@ -373,12 +441,11 @@ public class MainPlayingScreen extends ScreenBase {
             setOrientation(Orientation.UP);
         }
 
-        bodyPlayer.setLinearVelocity(yForce, bodyPlayer.getLinearVelocity().y);
-        bodyPlayer.setLinearVelocity(xForce, bodyPlayer.getLinearVelocity().x);
+        velocityLogic(xForce, yForce);
         main.getPlayer().updatePosition(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y);
     }
 
-    public ArrayList<Body> createCollisionBoxes(TiledMapTileLayer tileLayer, boolean interactable, Object object) {
+    public ArrayList<Body> createCollisionBoxes(@NotNull TiledMapTileLayer tileLayer, boolean interactable, @Null Object object) {
         ArrayList<Body> bodies = new ArrayList<>();
         int index = 0;
 
@@ -429,8 +496,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void show() {
         mainMusic.play();
-        //Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
-        //Gdx.input.setCursorCatched(true);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
+        Gdx.input.setCursorCatched(true);
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
         bodies = createCollisionBoxes(solidLayer, false, null);
@@ -447,8 +514,8 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void hide() {
         //mainMusic.stop();
-        //Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
-        //Gdx.input.setCursorCatched(false);
+        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
+        Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(null);
     }
 

@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 public class Launch {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(60);
+		config.setForegroundFPS(240);
 		config.setTitle("Adventure");
 		config.setWindowIcon("icon.png");
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
