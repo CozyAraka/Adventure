@@ -23,7 +23,6 @@ public class StatueList{
         statues.add(new Statue("\n \n Halte dich von Monstern fern!", 100, 20, 3));
     }
 
-    /*
     public Statue getStatueByID(int id) {
         for (Statue statue : statues) {
             if(statue.getID() == id) {
@@ -31,7 +30,7 @@ public class StatueList{
             }
         }
         return statues.get(0);
-    }*/
+    }
 
     public Statue handleStatues(int id, Stage stage) {
         for(Statue statue : statues) {
