@@ -5,8 +5,8 @@
     },
     "activeFile": "D:/Desktop/Adventure/assets/map/mapFinal.tmx",
     "expandedProjectPaths": [
-        "Mapset",
         ".",
+        "Mapset",
         "General"
     ],
     "fileStates": {
@@ -20,11 +20,11 @@
                 21,
                 20
             ],
-            "scale": 1.5,
-            "selectedLayer": 1,
+            "scale": 5.5,
+            "selectedLayer": 16,
             "viewCenter": {
-                "x": 755.6666666666666,
-                "y": 733.3333333333333
+                "x": 1069.3636363636365,
+                "y": 564
             }
         },
         "Dungeons/decorative.tsx": {
