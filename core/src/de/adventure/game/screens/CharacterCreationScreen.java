@@ -33,13 +33,14 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
 
     private Button buttonPlay;
 
-    private TextField textFieldCharName, textFieldNameHint, textFieldCharAussehen, textFieldLookNumber;
+    private TextField textFieldCharName, textFieldNameHint, textFieldCharLooks, textFieldLookNumber;
     private TextField.TextFieldStyle tfStyle;
 
     private TextureAtlas taButtonPlay;
 
     private String input;
-    private int lookCount, lookAvailable;
+    private int lookCount;
+    private final int lookAvailable;
 
     //Siehe Klasse "MainMenu" für Erklärungen
     public CharacterCreationScreen(final Game game, final Main main) {
@@ -61,35 +62,13 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
 
         skinButtonPlay = new Skin(Gdx.files.internal("textures/Buttons/Play/Play.json"));
 
-        tableButtonStart = new Table();
-        tableButtonStart.setBounds(0, 0, 100, 50);
-        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
-        tableButtonStart.setY(150F);
-
-        tableButtonArrow = new Table();
-        tableButtonArrow.setBounds(0, 0, 400, 50);
-        tableButtonArrow.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonArrow.getWidth() / 2));
-        tableButtonArrow.setY(575F);
-
-        tableTextLookNumber = new Table();
-        tableTextLookNumber.setBounds(0, 0, 50, 50);
-        tableTextLookNumber.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextLookNumber.getWidth() / 2));
-        tableTextLookNumber.setY(400F);
-
-        tableTextName = new Table();
-        tableTextName.setBounds(0, 0, 500, 50);
-        tableTextName.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextName.getWidth() / 2));
-        tableTextName.setY(850F);
-
-        tableTextLooks = new Table();
-        tableTextLooks.setBounds(0, 0, 500, 50);
-        tableTextLooks.setX((float) (Gdx.graphics.getWidth() / 2) - (tableTextLooks.getWidth() / 2));
-        tableTextLooks.setY(800F);
-
-        tablePictureChara = new Table();
-        tablePictureChara.setBounds(0, 0, 400, 400);
-        tablePictureChara.setX((float) (Gdx.graphics.getWidth() / 2) - (tablePictureChara.getWidth() / 2));
-        tablePictureChara.setY(400F);
+        //Tables
+        tableButtonStart = createTable(100, 50, true, 0, 150);
+        tableButtonArrow = createTable(400, 50, true, 0, 575);
+        tableTextLookNumber = createTable(50, 50, true, 0, 400);
+        tableTextName = createTable(500, 50, true, 0, 850);
+        tableTextLooks = createTable(500, 50, true, 0, 800);
+        tablePictureChara = createTable(400, 400, true, 0, 400);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
@@ -111,10 +90,10 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
         textFieldCharName.setAlignment(Align.center);
         tableTextName.add(textFieldCharName).width(300F).height(30F);
 
-        textFieldCharAussehen = new TextField("Wähle dein Aussehen:", tfStyle);
-        textFieldCharAussehen.setDisabled(true);
-        textFieldCharAussehen.setAlignment(Align.center);
-        tableTextLooks.add(textFieldCharAussehen).width(250F).height(30F);
+        textFieldCharLooks = new TextField("Wähle dein Aussehen:", tfStyle);
+        textFieldCharLooks.setDisabled(true);
+        textFieldCharLooks.setAlignment(Align.center);
+        tableTextLooks.add(textFieldCharLooks).width(250F).height(30F);
 
         textFieldLookNumber = new TextField(lookCount + "/" + lookAvailable, tfStyle);
         textFieldLookNumber.setDisabled(true);
@@ -128,7 +107,7 @@ public class CharacterCreationScreen extends ScreenBase implements Screen {
                 input = textFieldCharName.getText();
                 System.out.println(input);
                 main.setPlayer(new Player(input, 0, 0, lookCount));
-                game.setScreen(main.getMainPlayingScreen());
+                game.setScreen(Main.getMainPlayingScreen());
             }
         });
         buttonPlay.addListener(new HoverListener() {

@@ -58,11 +58,7 @@ public class Audio {
         if(volume1 < 0) {
             volume1 = 0;
         }
-        //System.out.println(val1);
-        //System.out.println(volume1);
         music.setVolume(volume1);
-        //System.out.println(val1);
-        System.out.println(main.getPlayer().getXCord() + " XCord : YCord " + main.getPlayer().getYCord());
     }
 
     public void pause() {

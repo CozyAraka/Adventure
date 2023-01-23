@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class Main extends Game {
 	//Debug
-	private boolean debug;
+	private final boolean debug;
 
 	//LibGDX
 	private BitmapFont font;
@@ -46,7 +46,7 @@ public class Main extends Game {
 	private Player player;
 
 	//Stuff
-	public static final Logger logger = new Logger("LibGDX Utils");
+	public static final Logger logger = new Logger("Adventure");
 	public static final AssetManager assets = new AssetManager();
 	public static final Random random = new Random();
 	public static SpriteBatch spriteBatch;
@@ -82,10 +82,6 @@ public class Main extends Game {
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 
-		/*batch.begin();
-		font.draw(batch, "Loading...", (float) Gdx.graphics.getWidth() / 2, (float) Gdx.graphics.getHeight() / 2);
-		batch.end();*/
-
 		//Items
 		itemCollector = new ItemCollector();
 		itemCollector.registerItems();
@@ -103,7 +99,6 @@ public class Main extends Game {
 		inventoryScreen = new InventoryScreen();
 
 		setGameState(GameState.RUNNING);
-		//ScreenUtils.clear(0, 0, 0, 1);
 		game.setScreen(getMainMenu());
 	}
 
