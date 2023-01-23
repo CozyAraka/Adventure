@@ -8,22 +8,22 @@ import java.util.ArrayList;
 
 public class ItemCollector {
     //Item Liste
-    private ArrayList<Item> itemList;
+    private final ArrayList<Item> itemList;
     //private ArrayList<Weapon> itemListUsables;
     //private ArrayList<Weapon> itemListHealing;
 
     //Alle Items
-    private CommonSlashing commonSlashing;
-    private UncommonSlashing uncommonSlashing;
-    private RareSlashing rareSlashing;
-    private MysticSlashing mysticSlashing;
-    private LegendarySlashing legendarySlashing;
+    private final CommonSlashing commonSlashing;
+    private final UncommonSlashing uncommonSlashing;
+    private final RareSlashing rareSlashing;
+    private final MysticSlashing mysticSlashing;
+    private final LegendarySlashing legendarySlashing;
 
-    private CommonBlunt commonBlunt;
-    private UncommonBlunt uncommonBlunt;
-    private RareBlunt rareBlunt;
-    private MysticBlunt mysticBlunt;
-    private LegendaryBlunt legendaryBlunt;
+    private final CommonBlunt commonBlunt;
+    private final UncommonBlunt uncommonBlunt;
+    private final RareBlunt rareBlunt;
+    private final MysticBlunt mysticBlunt;
+    private final LegendaryBlunt legendaryBlunt;
 
     public ItemCollector() {
         itemList = new ArrayList<>();

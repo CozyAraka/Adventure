@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -16,9 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
@@ -33,49 +30,40 @@ public class MainPlayingScreen extends ScreenBase {
     protected final Game game;
     protected final Main main;
     private final Stage stage;
-    private TextButton.TextButtonStyle tbStyle;
     private final BitmapFont font;
     private final Skin skin;
-    /*private final Table tableMap, tableInventory;*/
-    //private final SpriteBatch batch;
 
-    private int x, y, pixelTileSize;
+    private int pixelTileSize;
 
-    private float unitScale, mapWidth, mapHeight;
+    private final float unitScale, mapWidth, mapHeight;
+    private float elapsed = 0F;
+    private float accumulatedTime = 0F;
 
     //Map Rendering
+    private final OrthogonalTiledMapRenderer mapRenderer;
     private TiledMap tiledMap;
-    private TiledMap desert_map_1;
-
     private TiledMapTileLayer solidLayer, solidUnderLayer, solidOverPlayerLayer;
     private TiledMapTileLayer interactableLayer;
-    private TiledMapTileLayer interactableTopLayer, solidTopLayer, decorationLayer, decorationTopLayer, shadowLayer, groundLayer, groundTopLayer;
-
-    private OrthogonalTiledMapRenderer mapRenderer;
-    private OrthographicCamera orthoCam;
-    private FitViewport viewport;
 
     //Physics
-    private Player player;
-    private World world;
+    private final Player player;
+    private final World world;
     private Body bodyPlayer;
-    private BodyDef bodyDef;
     private PolygonShape shape;
     private CircleShape circleShape;
     private ArrayList<Body> bodies;
-
-    private ShapeRenderer shapeRenderer;
-
-    private Audio mainMusic;
-    private Statue statue;
     private HitboxListener hitboxListener;
 
+    private Audio mainMusic;
+
+    //Rendering
+    private final OrthographicCamera orthoCam;
     private Box2DDebugRenderer debugRenderer;
+    private ShapeRenderer shapeRenderer;
 
     //Player Animation
-    private Animation<TextureRegion> walkAnimationUp, walkAnimationDown, walkAnimationLeft, walkAnimationRight;
-    private Animation<TextureRegion> idleAnimationUp, idleAnimationDown, idleAnimationLeft, idleAnimationRight;
-    private Texture walkSheetRight;
+    private final Animation<TextureRegion> walkAnimationUp, walkAnimationDown, walkAnimationLeft, walkAnimationRight;
+    private final Animation<TextureRegion> idleAnimationUp, idleAnimationDown, idleAnimationLeft, idleAnimationRight;
     private SpriteBatch spriteBatch;
     private Sprite playerSprite;
     private TextureRegion currentFrame;
@@ -97,14 +85,15 @@ public class MainPlayingScreen extends ScreenBase {
         stage = Main.getStage();
 
         //Player Animation
-        walkAnimationUp = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkUp.png")));
-        idleAnimationUp = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleUp.png")));
-        walkAnimationDown = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkDown.png")));
-        idleAnimationDown = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleDown.png")));
-        walkAnimationLeft = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkLeft.png")));
-        idleAnimationLeft = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleLeft.png")));
-        walkAnimationRight = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/WalkRight.png")));
-        idleAnimationRight = new Animation<TextureRegion>(0.025f, createTextureRegion(6, 1, new Texture("player/IdleRight.png")));
+        walkAnimationUp = createAnimation(0.025F, 6, 1, "player/WalkUp.png");
+        idleAnimationUp = createAnimation(0.025F, 6, 1, "player/IdleUp.png");
+        walkAnimationDown = createAnimation(0.025F, 6, 1, "player/WalkDown.png");
+        idleAnimationDown = createAnimation(0.025F, 6, 1, "player/IdleDown.png");
+        walkAnimationLeft = createAnimation(0.025F, 6, 1, "player/WalkLeft.png");
+        idleAnimationLeft = createAnimation(0.025F, 6, 1, "player/IdleLeft.png");
+        walkAnimationRight = createAnimation(0.025F, 6, 1, "player/WalkRight.png");
+        idleAnimationRight = createAnimation(0.025F, 6, 1, "player/IdleRight.png");
+
         spriteBatch = new SpriteBatch();
 
         //Music
@@ -119,16 +108,8 @@ public class MainPlayingScreen extends ScreenBase {
         unitScale = 1/16F;
         pixelTileSize = 16;
 
-        //Positions des Spielers
-        x = 0;
-        y = 0;
-
-        //Statue test
-        /*
-        statue = new Statue("\n An der Statue steht geschrieben \n" +
-                "\nVersuche doch mal E um mit Dingen im Universum zu Interagieren!", 100, 20);*/
-
         debugRenderer = new Box2DDebugRenderer();
+
         //Tiled Map
         tiledMap = new TmxMapLoader().load("map/mapFinal.tmx");
 
@@ -137,15 +118,6 @@ public class MainPlayingScreen extends ScreenBase {
         solidUnderLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid_Under");
         solidOverPlayerLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Solid_over_Player");
         interactableLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Interactable");
-
-        //Rest Layer
-        interactableTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Interactable");
-        solidTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Solid");
-        decorationLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Decoration");
-        decorationTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Decoration");
-        shadowLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Shadow");
-        groundLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Ground");
-        groundTopLayer = (TiledMapTileLayer) tiledMap.getLayers().get("Top_Ground");
 
         world = new World(new Vector2(0f, 0f), true);
         shape = new PolygonShape();
@@ -161,9 +133,7 @@ public class MainPlayingScreen extends ScreenBase {
         orthoCam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         //Cam zoom (für das spiel später Gdx.graphics.getWidth() & getHeight() / 80!!!)
         orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 80, (float) Gdx.graphics.getHeight() / 80);
-
-        //Viewport
-        //viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), orthoCam);
+        //orthoCam.setToOrtho(false, (float) Gdx.graphics.getWidth() / 40, (float) Gdx.graphics.getHeight() / 40);
 
         //Map Renderer
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap, unitScale);
@@ -172,30 +142,10 @@ public class MainPlayingScreen extends ScreenBase {
         font = new BitmapFont();
         skin = new Skin();
 
-        /*
-        tableMap = new Table();
-        tableMap.setBounds(0, 0, 250, 250);
-        tableMap.setX(25F);
-        tableMap.setY(Gdx.graphics.getHeight() - 275);
-         */
-
-        /*
-        tableInventory = new Table();
-        tableInventory.setBounds(0, 0, 50, 400);
-        tableInventory.setX(25F);
-        tableInventory.setY(Gdx.graphics.getHeight() - 800);
-         */
-
-        tbStyle = new TextButton.TextButtonStyle();
-        tbStyle.font = font;
-
         //Debug code
         if(main.isDebug()) {
             stage.setDebugAll(true);
         }
-
-        //stage.addActor(tableMap);
-        //stage.addActor(tableInventory);
 
         //Setzt den generellen Input Processor zum stage Objekt (wird benutzt damit man überhaupt was machen kann)
         stage.addActor(inventoryActor);
@@ -204,19 +154,30 @@ public class MainPlayingScreen extends ScreenBase {
 
     }
 
-    public TextureRegion[] createTextureRegion(int columns, int rows, Texture texture) {
-        TextureRegion[][] textureRegion = TextureRegion.split(texture, texture.getWidth() / columns, texture.getHeight() / rows);
-        TextureRegion[] walkFrames = new TextureRegion[columns * rows];
-        int index = 0;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                walkFrames[index++] = textureRegion[i][j];
-            }
+    public void updateCameraWithPlayer() {
+        if(orthoCam.viewportWidth > mapWidth) {
+            orthoCam.position.x = mapWidth;
+
+        }else if(orthoCam.position.x - orthoCam.viewportWidth / 2 <= 0) {
+            orthoCam.position.x = orthoCam.viewportWidth / 2;
+
+        }else if(orthoCam.position.x + orthoCam.viewportWidth / 2 >= mapWidth) {
+            orthoCam.position.x = mapWidth - orthoCam.viewportWidth / 2;
+
         }
-        return walkFrames;
+
+        if(orthoCam.viewportHeight > mapHeight) {
+            orthoCam.position.y = mapHeight / 2;
+
+        }else if(orthoCam.position.y - orthoCam.viewportHeight / 2 <= 0) {
+            orthoCam.position.y = orthoCam.viewportHeight / 2;
+
+        }else if(orthoCam.position.y + orthoCam.viewportHeight / 2 >= mapHeight) {
+            orthoCam.position.y = mapHeight - orthoCam.viewportHeight / 2;
+
+        }
     }
 
-    private float elapsed = 0F;
     public void waterAnimation() {
         elapsed += Gdx.graphics.getDeltaTime();
 
@@ -246,8 +207,8 @@ public class MainPlayingScreen extends ScreenBase {
             mapRenderer.render(waterAnim2);
         }
     }
+
     //Generelle render Methode die nach dem switchen zu diesem Screen benutzt wird
-    private float accumulatedTime = 0F;
     @Override
     public void render(float delta) {
         clearColorBuffer();
@@ -259,27 +220,34 @@ public class MainPlayingScreen extends ScreenBase {
         //15 = Top_Solid
         //14 = Solid
 
-        //TODO ein layer solid über un ein unter dem Spieler!
         int[] groundTopGround = {0, 1};
         int[] behindPlayer = {10, 11, 12, 13, 14, 16, 17};
         int[] overPlayer = {15, 16, 18, 19};
 
         processInput();
+
+        playerSprite = new Sprite(currentFrame);
+        playerSprite.setOrigin(0, 0);
+        playerSprite.setSize(3F, 3F);
+        //playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 100F);
+        //playerSprite.setPosition((float) Gdx.graphics.getWidth() * 0.8F, (float) Gdx.graphics.getHeight() * 0.8F);
+        playerSprite.setPosition(bodyPlayer.getPosition().x - 1.5F, bodyPlayer.getPosition().y - 1.25F);
+
+
         orthoCam.position.set(new Vector3(main.getPlayer().getXCord(), main.getPlayer().getYCord(), 0));
-        //orthoCam.position.set(new Vector3(Math.min((mapWidth / 2) - orthoCam.viewportWidth / 2 , orthoCam.position.x), Math.min((mapHeight / 2) - orthoCam.viewportHeight / 2 , orthoCam.position.y), 0));
-        //orthoCam.position.set(new Vector3(Math.max(-(mapWidth / 2) + orthoCam.viewportWidth / 2 , orthoCam.position.x), Math.min(-(mapHeight / 2) + orthoCam.viewportHeight / 2 , orthoCam.position.y), 0));
+
+        //Not working
+        updateCameraWithPlayer();
         orthoCam.update();
 
         mapRenderer.setView(orthoCam);
         mapRenderer.render(groundTopGround);
         waterAnimation();
 
-        playerSprite = new Sprite(currentFrame);
-        playerSprite.setPosition((float) Gdx.graphics.getWidth() / 2 - 125F, (float) Gdx.graphics.getHeight() / 2 - 100F);
-        playerSprite.setSize(250F, 250F);
-
         mapRenderer.render(behindPlayer);
 
+        //spriteBatch.setTransformMatrix(orthoCam.combined);
+        spriteBatch.setProjectionMatrix(orthoCam.combined);
         spriteBatch.begin();
         playerSprite.draw(spriteBatch);
         spriteBatch.end();
@@ -319,10 +287,6 @@ public class MainPlayingScreen extends ScreenBase {
         return orientation;
     }
 
-    public void renderInventory() {
-
-    }
-
     public void processInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             game.setScreen(main.getMapScreen());
@@ -360,60 +324,57 @@ public class MainPlayingScreen extends ScreenBase {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            xForce = -3;
-            currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 4, true);
+            xForce = -2;
+            currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                xForce = -4;
-                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 3, true);
+                xForce = -3;
+                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 4, true);
             }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                xForce = -2;
-                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 5, true);
+                xForce = -1;
+                currentFrame = walkAnimationLeft.getKeyFrame(accumulatedTime / 7, true);
             }
             setOrientation(Orientation.LEFT);
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            xForce = 3;
-            currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 4, true);
+            xForce = 2;
+            currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                xForce = 4;
-                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 3, true);
+                xForce = 3;
+                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 4, true);
             }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                xForce = 2;
-                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 5, true);
+                xForce = 1;
+                currentFrame = walkAnimationRight.getKeyFrame(accumulatedTime / 7, true);
             }
             setOrientation(Orientation.RIGHT);
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            yForce = -3;
-            currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 4, true);
+            yForce = -2;
+            currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                yForce = -4;
-                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 3, true);
+                yForce = -3;
+                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 4, true);
             }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                yForce = -2;
-                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 5, true);
+                yForce = -1;
+                currentFrame = walkAnimationDown.getKeyFrame(accumulatedTime / 7, true);
             }
             setOrientation(Orientation.DOWN);
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            yForce = 3;
-            currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 4, true);
+            yForce = 2;
+            currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 5, true);
             if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                yForce = 4;
-                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 3, true);
+                yForce = 3;
+                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 4, true);
             }else if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                yForce = 2;
-                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 5, true);
+                yForce = 1;
+                currentFrame = walkAnimationUp.getKeyFrame(accumulatedTime / 7, true);
             }
 
             setOrientation(Orientation.UP);
         }
 
-        bodyPlayer.setLinearVelocity(yForce * 1, bodyPlayer.getLinearVelocity().y);
-        bodyPlayer.setLinearVelocity(xForce * 1, bodyPlayer.getLinearVelocity().x);
+        bodyPlayer.setLinearVelocity(yForce, bodyPlayer.getLinearVelocity().y);
+        bodyPlayer.setLinearVelocity(xForce, bodyPlayer.getLinearVelocity().x);
         main.getPlayer().updatePosition(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y);
     }
 

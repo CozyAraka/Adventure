@@ -43,15 +43,8 @@ public class MainMenuScreen extends ScreenBase implements Screen {
         skinButtonExit = new Skin(Gdx.files.internal("textures/Buttons/Exit/Exit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
-        tableButtonStart = new Table();
-        tableButtonStart.setBounds(0, 0, 100, 50);
-        tableButtonStart.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonStart.getWidth() / 2));
-        tableButtonStart.setY(600F);
-
-        tableButtonExit = new Table();
-        tableButtonExit.setBounds(0, 0, 100, 50);
-        tableButtonExit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonExit.getWidth() / 2));
-        tableButtonExit.setY(400F);
+        tableButtonStart = createTable(100, 50, true, 0, 600);
+        tableButtonExit = createTable(100, 50, true, 0, 400);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;

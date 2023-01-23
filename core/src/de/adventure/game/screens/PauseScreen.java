@@ -44,15 +44,8 @@ public class PauseScreen extends ScreenBase implements Screen {
         skinButtonQuit = new Skin(Gdx.files.internal("textures/Buttons/Quit/Quit.json"));
 
         //Table ist praktisch eine Grid zum Platzieren von Objekten, wie ein Regal
-        tableButtonResume = new Table();
-        tableButtonResume.setBounds(0, 0, 100, 50);
-        tableButtonResume.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonResume.getWidth() / 2));
-        tableButtonResume.setY(600F);
-
-        tableButtonQuit = new Table();
-        tableButtonQuit.setBounds(0, 0, 100, 50);
-        tableButtonQuit.setX((float) (Gdx.graphics.getWidth() / 2) - (tableButtonQuit.getWidth() / 2));
-        tableButtonQuit.setY(400F);
+        tableButtonResume = createTable(100, 50, true, 0, 600);
+        tableButtonQuit = createTable(100, 50, true, 0, 400);
 
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.font = font;
