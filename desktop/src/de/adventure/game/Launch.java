@@ -12,6 +12,6 @@ public class Launch {
 		config.setWindowIcon("icon.png");
 		config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		//config.setWindowedMode(960, 700);
-		new Lwjgl3Application(new Main(true), config);
+		new Lwjgl3Application(new Main(false), config);
 	}
 }
