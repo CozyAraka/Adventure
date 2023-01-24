@@ -17,11 +17,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.utils.Null;
 import de.adventure.game.Main;
 import de.adventure.game.audio.Audio;
 import de.adventure.game.entities.player.Player;
-import de.adventure.game.entities.statue.Statue;
 import de.adventure.game.input.HitboxListener;
 import de.adventure.game.inventory.Inventory;
 import de.adventure.game.inventory.InventoryActor;
@@ -445,7 +443,7 @@ public class MainPlayingScreen extends ScreenBase {
         main.getPlayer().updatePosition(bodyPlayer.getPosition().x, bodyPlayer.getPosition().y);
     }
 
-    public ArrayList<Body> createCollisionBoxes(@NotNull TiledMapTileLayer tileLayer, boolean interactable, @Null Object object) {
+    public ArrayList<Body> createCollisionBoxes(@NotNull TiledMapTileLayer tileLayer, boolean interactable) {
         ArrayList<Body> bodies = new ArrayList<>();
         int index = 0;
 
@@ -459,12 +457,14 @@ public class MainPlayingScreen extends ScreenBase {
                 BodyDef bodyDefinition = new BodyDef();
                 bodyDefinition.type = BodyDef.BodyType.StaticBody;
                 bodyDefinition.position.set(column + 0.5F, row + 0.5F);
-                if(interactable && object instanceof Statue) {
+                //Statue Tile ID = 143
+                if(interactable && cell.getTile().getId() == 143) {
                     bodyDefinition.position.set(column + 0.5F, row - 0.1F);
                 }
 
                 shape.setAsBox(0.48F, 0.48F);
-                if(interactable && object instanceof Statue) {
+                //Statue Tile ID = 143
+                if(interactable && cell.getTile().getId() == 143) {
                     shape.setAsBox(0.35F, 0.1F);
                 }
 
@@ -481,7 +481,9 @@ public class MainPlayingScreen extends ScreenBase {
 
                 //Statue ID range -> 0 - 20
                 //Default id -> -1
-                if(interactable && object instanceof Statue) {
+
+                //Statue Tile ID = 143
+                if(interactable && cell.getTile().getId() == 143) {
                     bodies.get(index).getFixtureList().get(0).setUserData(index);
                 }
                 //TODO ID hinzufügen für Kisten usw
@@ -500,14 +502,13 @@ public class MainPlayingScreen extends ScreenBase {
         Gdx.input.setCursorCatched(true);
         Gdx.graphics.setTitle("Adventure");
         Gdx.input.setInputProcessor(stage);
-        bodies = createCollisionBoxes(solidLayer, false, null);
-        bodies.addAll(createCollisionBoxes(solidUnderLayer, false, null));
-        bodies.addAll(createCollisionBoxes(solidOverPlayerLayer, false, null));
+        bodies = createCollisionBoxes(solidLayer, false);
+        bodies.addAll(createCollisionBoxes(solidUnderLayer, false));
+        bodies.addAll(createCollisionBoxes(solidOverPlayerLayer, false));
 
         //Statues
-        Statue statue = new Statue(null, 0, 0, 0);
-        bodies.addAll(createCollisionBoxes(interactableLayer, true, statue));
-        bodies.addAll(createCollisionBoxes(interactableLayer, false, null));
+        bodies.addAll(createCollisionBoxes(interactableLayer, true));
+        bodies.addAll(createCollisionBoxes(interactableLayer, false));
     }
 
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
