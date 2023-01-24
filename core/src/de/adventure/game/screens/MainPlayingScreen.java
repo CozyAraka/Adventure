@@ -180,24 +180,24 @@ public class MainPlayingScreen extends ScreenBase {
     }
 
     public void velocityLogic(float xForce, float yForce) {
-        if(bodyPlayer.getPosition().x > mapWidth && orientation == Orientation.RIGHT && Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if(bodyPlayer.getPosition().x > mapWidth && orientation == Orientation.RIGHT && (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.DPAD_RIGHT))) {
             bodyPlayer.setLinearVelocity(yForce / 3F, bodyPlayer.getLinearVelocity().y);
             bodyPlayer.setLinearVelocity(0, bodyPlayer.getLinearVelocity().x);
             return;
 
-        }else if(bodyPlayer.getPosition().x < 0 && orientation == Orientation.LEFT && Gdx.input.isKeyPressed(Input.Keys.A)) {
+        }else if(bodyPlayer.getPosition().x < 0 && orientation == Orientation.LEFT && (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.DPAD_LEFT))) {
             bodyPlayer.setLinearVelocity(yForce / 3F, bodyPlayer.getLinearVelocity().y);
             bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().x);
             return;
 
         }
 
-        if(bodyPlayer.getPosition().y > mapHeight && orientation == Orientation.UP && Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if(bodyPlayer.getPosition().y > mapHeight && orientation == Orientation.UP && (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.DPAD_UP))) {
             bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().y);
             bodyPlayer.setLinearVelocity(xForce / 3F, bodyPlayer.getLinearVelocity().x);
             return;
 
-        }else if(bodyPlayer.getPosition().y < 0 && orientation == Orientation.DOWN && Gdx.input.isKeyPressed(Input.Keys.S)) {
+        }else if(bodyPlayer.getPosition().y < 0 && orientation == Orientation.DOWN && (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN))) {
             bodyPlayer.setLinearVelocity(0 / 3F, bodyPlayer.getLinearVelocity().y);
             bodyPlayer.setLinearVelocity(xForce / 3F, bodyPlayer.getLinearVelocity().x);
             return;
