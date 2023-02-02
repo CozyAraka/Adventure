@@ -1,8 +1,10 @@
 package de.adventure.game.entities;
 
+import com.badlogic.gdx.Gdx;
 import de.adventure.game.entities.monsters.thief.ThiefList;
 import de.adventure.game.entities.monsters.thief.ThiefMonster;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class EntityCollector {
@@ -28,17 +30,17 @@ public class EntityCollector {
 
     //Registriert alle Entities
     public void registerEntities() {
+        Gdx.app.debug(LocalTime.now() + "", "Registering entities...");
         int count = 0;
         for(Entity entity : entityList) {
             //Schaut, ob die Instanz im array die benutzt wird, ein Objekt der Klasse ist die hinter instanceof steht
             if(entity instanceof ThiefMonster) {
                 ThiefMonster thiefMonster = (ThiefMonster) entityList.get(count);
-                System.out.println(thiefMonster.getAgility());
             }
             entity.setId(count);
-            System.out.println(entity.getName() + " registered with ID: " + count);
+            Gdx.app.debug(LocalTime.now() + "", entity.getName() + " registered with ID: " + count);
             count++;
         }
-        System.out.println("\n" + count + " Entities loaded! \n");
+        Gdx.app.debug(LocalTime.now() + "", count + " Entities loaded!");
     }
 }
