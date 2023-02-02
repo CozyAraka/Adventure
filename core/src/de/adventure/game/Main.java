@@ -15,8 +15,11 @@ import de.adventure.game.entities.EntityCollector;
 import de.adventure.game.entities.player.Player;
 import de.adventure.game.inventory.InventoryScreen;
 import de.adventure.game.items.ItemCollector;
+import de.adventure.game.savemanager.FileHandler;
+import de.adventure.game.savemanager.SaveManager;
 import de.adventure.game.screens.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Main extends Game {
@@ -53,6 +56,9 @@ public class Main extends Game {
 	public static ModelBatch modelBatch;
 	private static Stage stage;
 
+	private FileHandler fileHandler;
+	private SaveManager saveManager;
+
 	public enum GameState {
 		RUNNING,
 		PAUSED,
@@ -71,7 +77,7 @@ public class Main extends Game {
 		Main.assets.load("skins/uiskin.json", Skin.class);
 		Main.assets.load("icons/icons.atlas", TextureAtlas.class);
 		Main.assets.finishLoading();
-		Gdx.graphics.setVSync(true);
+		Gdx.graphics.setVSync(false);
 		stage = new Stage();
 
 		//Player
@@ -90,6 +96,21 @@ public class Main extends Game {
 		entityCollector = new EntityCollector();
 		entityCollector.registerEntities();
 
+		setGameState(GameState.RUNNING);
+
+		//Working save manager!
+		ArrayList<String> str = new ArrayList<>();
+		str.add("cordsX:56.5");
+		str.add("cordsY:20.5");
+		str.add("facing:left");
+		str.add("hp:100.0");
+		str.add("mp:100.0");
+		str.add("money:20.45");
+
+		saveManager = new SaveManager("save1.adv", this);
+		//saveManager.saveGame(str);
+		saveManager.loadSave();
+
 		//Screens
 		mainMenuScreen = new MainMenuScreen(this, this);
 		characterCreationScreen = new CharacterCreationScreen(this, this);
@@ -98,8 +119,11 @@ public class Main extends Game {
 		pauseScreen = new PauseScreen(this, this);
 		inventoryScreen = new InventoryScreen();
 
-		setGameState(GameState.RUNNING);
 		game.setScreen(getMainMenu());
+	}
+
+	public SaveManager getSaveManager() {
+		return saveManager;
 	}
 
 	@Override

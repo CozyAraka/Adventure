@@ -23,6 +23,7 @@ import de.adventure.game.entities.player.Player;
 import de.adventure.game.input.HitboxListener;
 import de.adventure.game.inventory.Inventory;
 import de.adventure.game.inventory.InventoryActor;
+import de.adventure.game.savemanager.SaveManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -73,6 +74,13 @@ public class MainPlayingScreen extends ScreenBase {
     private InventoryActor inventoryActor;
     private Skin inventorySkin;
 
+    //Savestate
+    private float playerXPos;
+    private float playerYPos;
+    private float playerMoney;
+    private float playerHealth;
+    private float playerManaPoints;
+
     //Kreiert den Spielscreen
     public MainPlayingScreen(final Game game, final Main main) {
         super(game, main, "MainPlayingScreen");
@@ -109,6 +117,7 @@ public class MainPlayingScreen extends ScreenBase {
         unitScale = 1/16F;
         pixelTileSize = 16;
 
+        //Staring pos (for save)
         debugRenderer = new Box2DDebugRenderer();
 
         //Tiled Map
@@ -125,7 +134,15 @@ public class MainPlayingScreen extends ScreenBase {
         circleShape = new CircleShape();
         player = main.getPlayer();
 
-        bodyPlayer = player.createBody(world, circleShape, 0.2F, 56.5F, 20.5F);
+        //bodyPlayer = player.createBody(world, circleShape, 0.2F, 56.5F, 20.5F);
+        //Player states
+        setSavedOrientation();
+        playerXPos = main.getSaveManager().savedXPos();
+        playerYPos = main.getSaveManager().savedYPos();
+        playerMoney = main.getSaveManager().savedMoney();
+        playerHealth = main.getSaveManager().savedHP();
+        playerManaPoints = main.getSaveManager().savedMP();
+        bodyPlayer = player.createBody(world, circleShape, 0.2F, playerXPos, playerYPos);
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setAutoShapeType(true);
@@ -335,6 +352,23 @@ public class MainPlayingScreen extends ScreenBase {
         RIGHT
     }
     private static Orientation orientation = Orientation.RIGHT;
+    public void setSavedOrientation() {
+
+        switch(main.getSaveManager().savedOrientation()) {
+            case 'u':
+                setOrientation(Orientation.UP);
+                break;
+            case 'd':
+                setOrientation(Orientation.DOWN);
+                break;
+            case 'l':
+                setOrientation(Orientation.LEFT);
+                break;
+            case 'r':
+                setOrientation(Orientation.RIGHT);
+                break;
+        }
+    }
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
@@ -511,6 +545,23 @@ public class MainPlayingScreen extends ScreenBase {
         bodies.addAll(createCollisionBoxes(interactableLayer, false));
     }
 
+    public String orientationToString(@NotNull Orientation orientation) {
+        switch(orientation) {
+            case UP:
+                return "up";
+
+            case DOWN:
+                return "down";
+
+            case LEFT:
+                return "left";
+
+            case RIGHT:
+                return "right";
+        }
+        return null;
+    }
+
     //Wird aufgerufen, wenn zu einem anderen Screen geswitcht wird
     @Override
     public void hide() {
@@ -518,6 +569,17 @@ public class MainPlayingScreen extends ScreenBase {
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
         Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(null);
+
+        ArrayList<String> str = new ArrayList<>();
+        str.add("cordsX:" + bodyPlayer.getPosition().x);
+        str.add("cordsY:" + bodyPlayer.getPosition().y);
+        str.add("facing:" + orientationToString(getOrientation()));
+        str.add("hp:100.0");
+        str.add("mp:100.0");
+        str.add("money:20.45");
+
+        SaveManager saveManager = new SaveManager("save1.adv", main);
+        saveManager.saveGame(str);
     }
 
     @Override
@@ -525,5 +587,29 @@ public class MainPlayingScreen extends ScreenBase {
         skin.dispose();
         font.dispose();
         stage.dispose();
+    }
+
+    public float getPlayerXPos() {
+        return playerXPos;
+    }
+
+    public void setPlayerXPos(float playerXPos) {
+        this.playerXPos = playerXPos;
+    }
+
+    public float getPlayerYPos() {
+        return playerYPos;
+    }
+
+    public void setPlayerYPos(float playerYPos) {
+        this.playerYPos = playerYPos;
+    }
+
+    public float getPlayerMoney() {
+        return playerMoney;
+    }
+
+    public void setPlayerMoney(float playerMoney) {
+        this.playerMoney = playerMoney;
     }
 }
