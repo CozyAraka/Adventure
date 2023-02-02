@@ -1,5 +1,6 @@
 package de.adventure.game;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -73,6 +74,11 @@ public class Main extends Game {
 	@Override
 	public void create() {
 		setGameState(GameState.LOADING);
+		if(debug) {
+			Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		}else {
+			Gdx.app.setLogLevel(Application.LOG_ERROR);
+		}
 
 		Main.assets.load("skins/uiskin.json", Skin.class);
 		Main.assets.load("icons/icons.atlas", TextureAtlas.class);

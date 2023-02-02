@@ -1,9 +1,11 @@
 package de.adventure.game.items;
 
+import com.badlogic.gdx.Gdx;
 import de.adventure.game.items.weapons.Weapon;
 import de.adventure.game.items.weapons.blunt.*;
 import de.adventure.game.items.weapons.slashing.*;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class ItemCollector {
@@ -78,17 +80,17 @@ public class ItemCollector {
 
     //Registriert alle Items
     public void registerItems() {
+        Gdx.app.debug(LocalTime.now() + "", "Registering items...");
         int count = 0;
         for(Item item : itemList) {
             //Schaut, ob die Instanz im array die benutzt wird, ein Objekt der Klasse ist die hinter instanceof steht
             if(item instanceof Weapon) {
                 Weapon weapon = (Weapon) itemList.get(count);
-                System.out.println(weapon.getWeaponDamage());
             }
             item.setId(count);
-            System.out.println(item.getName() + " registered with ID: " + count);
+            Gdx.app.debug(LocalTime.now() + "", item.getName() + " registered with ID: " + count);
             count++;
         }
-        System.out.println("\n" + count + " Items loaded! \n");
+        Gdx.app.debug(LocalTime.now() + "", "Items loaded!");
     }
 }

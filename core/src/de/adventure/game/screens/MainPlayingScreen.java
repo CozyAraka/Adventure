@@ -26,6 +26,7 @@ import de.adventure.game.inventory.InventoryActor;
 import de.adventure.game.savemanager.SaveManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class MainPlayingScreen extends ScreenBase {
@@ -315,7 +316,7 @@ public class MainPlayingScreen extends ScreenBase {
     public void interactLogic() {
         if(HitboxListener.isTouching()) {
             if(orientation == Orientation.UP) {
-                if(Gdx.input.isKeyJustPressed(Input.Keys.E) && pressedE) {
+                if((Gdx.input.isKeyJustPressed(Input.Keys.E) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) && pressedE) {
                     HitboxListener.getStatue().endText(stage);
                     pressedE = !pressedE;
 
@@ -531,6 +532,8 @@ public class MainPlayingScreen extends ScreenBase {
     //Wird ein einziges Mal aufgerufen, und zwar beim switchen zu diesem screen (ist wie die Methode create())
     @Override
     public void show() {
+        Gdx.app.debug(LocalTime.now() + "", "Resumed Game");
+
         mainMusic.play();
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.None);
         Gdx.input.setCursorCatched(true);
@@ -566,6 +569,7 @@ public class MainPlayingScreen extends ScreenBase {
     @Override
     public void hide() {
         //mainMusic.stop();
+        Gdx.app.debug(LocalTime.now() + "", "Saved Game and paused");
         Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Arrow);
         Gdx.input.setCursorCatched(false);
         Gdx.input.setInputProcessor(null);

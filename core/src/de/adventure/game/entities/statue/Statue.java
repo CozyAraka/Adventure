@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import de.adventure.game.entities.Entity;
 
+import java.time.LocalTime;
+
 public class Statue extends Entity {
     private String textPrompt;
     private int id;
@@ -34,6 +36,7 @@ public class Statue extends Entity {
         textArea.setHeight(200F);
 
         stage.addActor(textArea);
+        Gdx.app.debug(LocalTime.now() + "", "Thrown Statue Text");
         return textArea;
 
     }
@@ -46,6 +49,7 @@ public class Statue extends Entity {
             }
 
         }
+        Gdx.app.debug(LocalTime.now() + "", "Ended Statue Text");
     }
 
     public int getID() {
